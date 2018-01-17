@@ -10,20 +10,20 @@ import edu.uoregon.scrumthing.EntryContainer;
 public class EntryListModel extends AbstractListModel<Entry> {
 	private static final long serialVersionUID = 2260775709941977100L;
 	
-	private List<Entry> data;
+	private EntryContainer<?> data;
 	@SuppressWarnings("unchecked")
 	public EntryListModel(EntryContainer<?> data) {
-		this.data = (List<Entry>) data.getEntryList();
+		this.data = data;
 	}
 
 	@Override
 	public Entry getElementAt(int index) {
-		return data.get(index);
+		return data.getEntry(index);
 	}
 
 	@Override
 	public int getSize() {
-		return data.size();
+		return data.getSize();
 	}
 
 }

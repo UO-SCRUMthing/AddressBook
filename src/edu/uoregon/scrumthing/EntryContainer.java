@@ -26,8 +26,12 @@ public abstract class EntryContainer<T extends Entry>{
 	 */
 	public abstract boolean sortBy(String field);
 	/**
-	 * Return a list of entry.
-	 * Each entry in the list will be displayed in the GUI.
+	 * Return a entry by index.
+	 * The index will be determine the order of the entry which will be displayed on the correct spot on screen.
 	 */
-	public abstract List<T> getEntryList();
+	public abstract T getEntry(int index);
+	/**
+	 * Return the size of the container
+	 */
+	public abstract int getSize();
 }

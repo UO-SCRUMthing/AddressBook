@@ -63,14 +63,20 @@ public class TestContainer extends EntryContainer<TestEntry>{
 		testList.add(entry);
 	}
 	
-	@Override
-	public List<TestEntry> getEntryList() {
-		return testList;
-	}
 
 	@Override
 	public void removeEntry(TestEntry entry) {
 		testList.remove(entry);
+	}
+
+	@Override
+	public TestEntry getEntry(int index) {
+		return testList.get(index);
+	}
+
+	@Override
+	public int getSize() {
+		return testList.size();
 	}
 	
 }

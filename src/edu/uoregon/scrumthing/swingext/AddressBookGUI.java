@@ -44,6 +44,7 @@ public class AddressBookGUI extends JFrame {
             	
             }
         });
+        
 	}
 	
 	private JMenuBar createMenuBar() {
