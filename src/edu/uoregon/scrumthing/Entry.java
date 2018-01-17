@@ -1,15 +1,29 @@
 package edu.uoregon.scrumthing;
 
-import java.io.Serializable;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
 import java.util.List;
 
-public abstract class Entry implements Serializable{
-	private static final long serialVersionUID = 4741635829877668887L;
-	
-	//public abstract Image getImage();
+public abstract class Entry{
+
+	/**
+	 * Return a string as the entry's display name
+	 * This string will be shown in the GUI contact list
+	 */
 	public abstract String getName();
+	/**
+	 * Return a list of key-value pairs
+	 * GUI will display each field in the order of returned list.
+	 */
 	public abstract List<SimpleEntry<String, String>> getDetailList();
+	/**
+	 * Update detail. 
+	 * 
+	 * @param detailMap  A hashmap contains changed fields.
+	 *                   The map does not necessary contains all required fields. 
+	 * @return false when passed unsupported fields, otherwise apply the change and return true.
+	 */
+	public abstract boolean updateDetail(HashMap<String, String> detailMap);
 	
 	@Override
 	public String toString() {

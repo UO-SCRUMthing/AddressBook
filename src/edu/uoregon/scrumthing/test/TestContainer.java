@@ -2,16 +2,16 @@ package edu.uoregon.scrumthing.test;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import edu.uoregon.scrumthing.Entry;
 import edu.uoregon.scrumthing.EntryContainer;
-import edu.uoregon.scrumthing.EntryFactory;
 import edu.uoregon.scrumthing.test.TestContainer.TestEntry;
 
 public class TestContainer extends EntryContainer<TestEntry>{
 	public class TestEntry extends Entry {
-		private static final long serialVersionUID = 6928546805640342117L;
 
 		@Override
 		public String getName() {
@@ -21,27 +21,20 @@ public class TestContainer extends EntryContainer<TestEntry>{
 		@Override
 		public List<SimpleEntry<String, String>> getDetailList() {
 			ArrayList<SimpleEntry<String, String>> testDetail = new ArrayList<SimpleEntry<String, String>>();
-			testDetail.add(new SimpleEntry<String, String>("TestKey", "TestValue"));
+			Random rand = new Random();
+			int cField = rand.nextInt(6);
+			for (int i = 0; i < cField; i++) {
+				testDetail.add(new SimpleEntry<String, String>("TestKey" + Integer.toString(i), "TestValue"));
+			}
 			return testDetail;
 		}
 
-	}
-	
-	public class TestFactory extends EntryFactory<TestEntry> {
-
 		@Override
-		public TestEntry newInstance(String[] args) throws IllegalArgumentException {
-			return new TestEntry();
-		}
-
-		@Override
-		public String[] getFieldKeys() {
-			return new String[] {"Test Field", "Test Field 2"};
+		public boolean updateDetail(HashMap<String, String> detailMap) {
+			return true;
 		}
 
 	}
-	
-	private static final long serialVersionUID = 8415373039514981719L;
 	
 	private ArrayList<TestEntry> testList;
 	
@@ -49,7 +42,7 @@ public class TestContainer extends EntryContainer<TestEntry>{
 		super();
 		System.out.println("TestContainer created!");
 		testList = new ArrayList<TestEntry>();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 50; i++) {
 			testList.add(new TestEntry());
 		}
 	}
@@ -58,25 +51,26 @@ public class TestContainer extends EntryContainer<TestEntry>{
 	public boolean isChanged() {
 		return false;
 	}
+	
 	@Override
 	public boolean sortBy(String field) {
 		return true;
 		
 	}
+	
 	@Override
 	public void addEntry(TestEntry entry) {
 		testList.add(entry);
-		return;
 	}
+	
 	@Override
 	public List<TestEntry> getEntryList() {
 		return testList;
 	}
 
 	@Override
-	public EntryFactory<TestEntry> getFactory() {
-		return new TestFactory();
+	public void removeEntry(TestEntry entry) {
+		testList.remove(entry);
 	}
-
 	
 }

@@ -12,6 +12,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import edu.uoregon.scrumthing.Entry;
 import edu.uoregon.scrumthing.EntryContainer;
@@ -20,6 +22,9 @@ public class AddressBookGUI extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
 	private EntryContainer<?> data;
 
+	private EntryListModel list;
+	private AddressDetailPanel detailPane;
+	
 	public AddressBookGUI(EntryContainer<?> data) {
 		super("Address Book");
 		this.data = data;
@@ -129,13 +134,35 @@ public class AddressBookGUI extends JFrame {
 	private JPanel createContentPane() {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		
-		EntryListModel listModel = new EntryListModel(data);
-		JList<Entry> nameList = new JList<Entry>(listModel);
+		list = new EntryListModel(data);
+		JList<Entry> nameList = new JList<Entry>(list);
+		nameList.setFixedCellWidth(150);
+		contentPanel.add(nameList, BorderLayout.LINE_START);
 		
-		contentPanel.add(nameList, BorderLayout.BEFORE_LINE_BEGINS);
+		detailPane = new AddressDetailPanel(null);
+		contentPanel.add(detailPane, BorderLayout.CENTER);
+		
+		nameList.addListSelectionListener(new ListSelectionListener() {
+
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				if (e.getValueIsAdjusting()) return;
+				contentPanel.remove(detailPane);
+				if (e.getFirstIndex() < 0) {
+					detailPane = new AddressDetailPanel(null);
+					contentPanel.add(detailPane, BorderLayout.CENTER);
+				} else {
+					detailPane = new AddressDetailPanel(list.getElementAt(e.getFirstIndex()));
+					contentPanel.add(detailPane, BorderLayout.CENTER);
+				}
+				contentPanel.revalidate();
+				contentPanel.repaint();
+				
+				
+			}
+		} );
 		
 		return contentPanel;
-		
 	}
 	
 	public boolean saveChange() {
@@ -145,7 +172,5 @@ public class AddressBookGUI extends JFrame {
 	public void close() {
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
-
-	
 	
 }
