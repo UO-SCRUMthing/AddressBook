@@ -19,6 +19,17 @@ public class Contact extends Entry {
         detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
         detailList.addAll(_userDefined);
     }
+    
+    public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber) {
+        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
+        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
+        detailList.add(new SimpleEntry<String, String>("address", _address));
+        detailList.add(new SimpleEntry<String, String>("city", _city));
+        detailList.add(new SimpleEntry<String, String>("state", _state));
+        detailList.add(new SimpleEntry<String, String>("zip", _zip));
+        detailList.add(new SimpleEntry<String, String>("email", _email));
+        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
+    }
 
 	@Override
 	public String getName() {
@@ -32,9 +43,14 @@ public class Contact extends Entry {
 
 	@Override
 	public boolean updateDetail(HashMap<String, String> detailMap) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-    
-    
+		boolean changed = false;
+		for (SimpleEntry<String, String> entry : detailList) {
+			String key = entry.getKey();
+			if (detailMap.containsKey(key)) {
+				entry.setValue(detailMap.get(key));
+				changed = true;
+			}
+		}
+		return changed;
+	}   
 }

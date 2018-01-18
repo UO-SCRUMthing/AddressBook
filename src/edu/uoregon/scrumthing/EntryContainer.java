@@ -20,7 +20,7 @@ public abstract class EntryContainer<T extends Entry>{
 	/**
 	 * Sort the data.
 	 * 
-	 * @param field  Sorting key.
+	 * @param field  Sorting key. Valid keys: name and zip.
 	 */
 	public abstract boolean sortBy(String field);
 	/**
