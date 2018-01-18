@@ -1,7 +1,5 @@
 package edu.uoregon.scrumthing;
 
-import java.util.List;
-
 public abstract class EntryContainer<T extends Entry>{
 	/**
 	 * Return true if the content have be changed after last save.

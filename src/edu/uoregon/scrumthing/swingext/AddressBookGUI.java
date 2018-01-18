@@ -1,17 +1,24 @@
 package edu.uoregon.scrumthing.swingext;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -22,7 +29,6 @@ public class AddressBookGUI extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
 	private EntryContainer<?> data;
 
-	private EntryListModel list;
 	private AddressDetailPanel detailPane;
 	
 	public AddressBookGUI(EntryContainer<?> data) {
@@ -34,7 +40,8 @@ public class AddressBookGUI extends JFrame {
 		this.setContentPane(createContentPane());
  
         //Display
-		this.setSize(640, 480);
+		this.setSize(new Dimension(640, 480));
+		this.setMinimumSize(new Dimension(320, 240));
 		this.setVisible(true);
 		
         addWindowListener(new java.awt.event.WindowAdapter() {
@@ -132,36 +139,62 @@ public class AddressBookGUI extends JFrame {
 		return menuBar;
 	}
 	
+	private JPanel createToolbar() {
+		JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		JComboBox<String> combo = new JComboBox<String>();
+		combo.setPreferredSize(new Dimension(100,20));
+		combo.addItem("Name");
+		combo.addItem("ZIP");
+		toolbar.add(combo);
+		toolbar.add(new JButton("+"));
+		toolbar.add(new JButton("x"));
+		return toolbar;
+	}
+
 	private JPanel createContentPane() {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		
-		list = new EntryListModel(data);
+		EntryListModel list = new EntryListModel(data);
 		JList<Entry> nameList = new JList<Entry>(list);
-		nameList.setFixedCellWidth(150);
-		contentPanel.add(nameList, BorderLayout.LINE_START);
+		JScrollPane splitLeft = new JScrollPane(nameList);
+		splitLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		splitLeft.setMinimumSize(new Dimension(100, 0));
+		splitLeft.setPreferredSize(new Dimension(150, 0));
 		
-		detailPane = new AddressDetailPanel(null);
-		contentPanel.add(detailPane, BorderLayout.CENTER);
+		JScrollPane splitRight = new JScrollPane();
+		splitRight.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		splitRight.setMinimumSize(new Dimension(250, 0));
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitLeft, splitRight);
 		
 		nameList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
 				if (e.getValueIsAdjusting()) return;
-				contentPanel.remove(detailPane);
+				splitRight.remove(detailPane);
 				if (e.getFirstIndex() < 0) {
 					detailPane = new AddressDetailPanel(null);
-					contentPanel.add(detailPane, BorderLayout.CENTER);
+					splitRight.setViewportView(detailPane);
 				} else {
 					detailPane = new AddressDetailPanel(list.getElementAt(e.getFirstIndex()));
-					contentPanel.add(detailPane, BorderLayout.CENTER);
+					splitRight.setViewportView(detailPane);
 				}
-				contentPanel.revalidate();
-				contentPanel.repaint();
+				splitRight.revalidate();
+				splitRight.repaint();
 				
 				
 			}
-		} );
+		});
+		
+		JPanel toolbar = createToolbar();
+		contentPanel.add(toolbar, BorderLayout.PAGE_START);
+		
+		detailPane = new AddressDetailPanel(null);
+		splitRight.add(detailPane);
+		
+		contentPanel.add(splitPane, BorderLayout.CENTER);
+		
+		contentPanel.add(new JLabel("Opened"), BorderLayout.PAGE_END);
 		
 		return contentPanel;
 	}
