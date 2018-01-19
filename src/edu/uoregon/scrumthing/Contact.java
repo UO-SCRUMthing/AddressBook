@@ -6,7 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Contact extends Entry {
-    List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();    
+    List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
+    List<String> fieldNames = new ArrayList<String>();
 
     public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber, List<SimpleEntry<String, String>> _userDefined) {
         detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
@@ -30,6 +31,14 @@ public class Contact extends Entry {
         detailList.add(new SimpleEntry<String, String>("email", _email));
         detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
     }
+    
+    public String getLastName() {
+    	return detailList.get(1).getValue();
+    }
+    
+    public String getZip() {
+    	return detailList.get(5).getValue();
+    }
 
 	@Override
 	public String getName() {
@@ -42,7 +51,7 @@ public class Contact extends Entry {
 	}
 
 	@Override
-	public boolean updateDetail(HashMap<String, String> detailMap) {
+	public boolean updateDetails(HashMap<String, String> detailMap) {
 		boolean changed = false;
 		for (SimpleEntry<String, String> entry : detailList) {
 			String key = entry.getKey();
@@ -53,4 +62,14 @@ public class Contact extends Entry {
 		}
 		return changed;
 	}   
+	
+	@Override
+	public String toString() {
+		return this.getName();
+	}
+	@Override
+	public Entry buildTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

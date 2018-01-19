@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class Entry{
-
+	List<SimpleEntry> detailList;
+	
+	public abstract Entry buildTemplate();
+	
 	/**
 	 * Return a string as the entry's display name
 	 * This string will be shown in the GUI contact list
@@ -23,7 +26,7 @@ public abstract class Entry{
 	 *                   The map does not necessary contains all required fields. 
 	 * @return false when passed unsupported fields, otherwise apply the change and return true.
 	 */
-	public abstract boolean updateDetail(HashMap<String, String> detailMap);
+	public abstract boolean updateDetails(HashMap<String, String> detailMap);
 	
 	@Override
 	public String toString() {
