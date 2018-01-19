@@ -34,11 +34,11 @@ public abstract class Controller {
 		//unset data member var
     	//returns true if successful, false otherwise
 	
-	public abstract void addNewEntry();
+	public abstract List<SimpleEntry> createNewEntry();
 		//SetDetailPane with field info from model
     	//wait for parameterized AddNewEntry	
 	
-	public abstract boolean addNewEntry(List<SimpleEntry<String, String>> details);
+	public abstract boolean addNewEntryToModel(List<SimpleEntry<String, String>> details);
 		// pass details to addressBook data member 
 		// this two things seem to do very different things...
 	
