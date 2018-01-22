@@ -15,18 +15,19 @@ public abstract class Controller {
 	
 	// file operations
 	public abstract boolean createNewAddressBook();
-    	//creates and sets new address book to DATA    #appends to DATA list if multiple books supported
+    	//creates and sets new address book to addressBook    
+		//appends to addressBook list if multiple books supported
     	//returns true if successful, false otherwise
 	
 	public abstract boolean openAddressBook(String fileName);
-		//sets FILENAME
+		//sets filePath
     	//returns true if filename successfully found and parsed, false otherwise
 	
 	public abstract boolean saveAddressBook();
 		//checks for recorded filename: if found, save to filename; if not request filename from GUI
 	
 	public abstract boolean saveAddressBook(String fileName);
-		//sets FILENAME
+		//sets filePath
     	//attempt to save data to filename, returns true if successful, false otherwise.
 		//Does not check for file collision, overwrites if filename already exists
 	
@@ -34,7 +35,7 @@ public abstract class Controller {
 		//unset data member var
     	//returns true if successful, false otherwise
 	
-	public abstract List<SimpleEntry> createNewEntry();
+	public abstract Entry createEmptyEntry();
 		//SetDetailPane with field info from model
     	//wait for parameterized AddNewEntry	
 	

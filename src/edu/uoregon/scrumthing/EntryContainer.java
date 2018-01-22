@@ -31,9 +31,9 @@ public abstract class EntryContainer<T extends Entry>{
 	 */
 	public abstract void removeEntry(int index);
 	
-	public abstract void setSortKey(String sortField);
+	public abstract boolean setSortKey(String sortField);
 	
-	public abstract void sort();
+	public abstract boolean sort();
 	
 	/**
 	 * Sort the data.

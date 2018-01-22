@@ -7,8 +7,6 @@ import java.util.List;
 public abstract class Entry{
 	List<SimpleEntry> detailList;
 	
-	public abstract Entry buildTemplate();
-	
 	/**
 	 * Return a string as the entry's display name
 	 * This string will be shown in the GUI contact list

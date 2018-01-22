@@ -60,13 +60,15 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
-	public void setSortKey(String sortField) {
+	public boolean setSortKey(String sortField) {
+		return false;
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void sort() {
+	public boolean sort() {
+		return false;
 		// TODO Auto-generated method stub
 		
 	}

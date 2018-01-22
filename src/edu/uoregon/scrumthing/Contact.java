@@ -2,14 +2,16 @@ package edu.uoregon.scrumthing;
 
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 public class Contact extends Entry {
     List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
-    List<String> fieldNames = new ArrayList<String>();
+    static List<String> fieldList = Arrays.asList("firstName", "lastName", "address", "city", "state", "zip", "email", "phoneNumber");
+    static ArrayList<String> fieldNames = new ArrayList<String>(fieldList);
 
-    public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber, List<SimpleEntry<String, String>> _userDefined) {
+    public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber, List<SimpleEntry<String, String>> _userFields) {
         detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
         detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
         detailList.add(new SimpleEntry<String, String>("address", _address));
@@ -18,7 +20,10 @@ public class Contact extends Entry {
         detailList.add(new SimpleEntry<String, String>("zip", _zip));
         detailList.add(new SimpleEntry<String, String>("email", _email));
         detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
-        detailList.addAll(_userDefined);
+        detailList.addAll(_userFields);
+        for (SimpleEntry<String, String> field : _userFields) {
+        	fieldNames.add(field.getKey());
+        }
     }
     
     public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber) {
@@ -31,6 +36,18 @@ public class Contact extends Entry {
         detailList.add(new SimpleEntry<String, String>("email", _email));
         detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
     }
+    
+    public Contact() {
+    	for (String field : fieldNames) {
+    		detailList.add(new SimpleEntry<String, String>(field, ""));
+    	}
+    }
+    
+	public void addUserFields(ArrayList<SimpleEntry<String, String>> userFields) {
+        for (SimpleEntry<String, String> field : userFields) {
+        	fieldNames.add(field.getKey());
+        }
+	}
     
     public String getLastName() {
     	return detailList.get(1).getValue();
@@ -66,10 +83,5 @@ public class Contact extends Entry {
 	@Override
 	public String toString() {
 		return this.getName();
-	}
-	@Override
-	public Entry buildTemplate() {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
