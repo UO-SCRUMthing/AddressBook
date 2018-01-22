@@ -7,9 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 
 public class Contact extends Entry {
-    List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
-    static List<String> fieldList = Arrays.asList("firstName", "lastName", "address", "city", "state", "zip", "email", "phoneNumber");
-    static ArrayList<String> fieldNames = new ArrayList<String>(fieldList);
+    private List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
+    private static List<String> defaultFields = Arrays.asList("firstName", "lastName", "address", "city", "state", "zip", "email", "phoneNumber");
+    private ArrayList<String> allFieldNames = new ArrayList<String>(defaultFields);
 
     public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber, List<SimpleEntry<String, String>> _userFields) {
         detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
@@ -22,7 +22,7 @@ public class Contact extends Entry {
         detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
         detailList.addAll(_userFields);
         for (SimpleEntry<String, String> field : _userFields) {
-        	fieldNames.add(field.getKey());
+        	allFieldNames.add(field.getKey());
         }
     }
     
@@ -38,14 +38,24 @@ public class Contact extends Entry {
     }
     
     public Contact() {
-    	for (String field : fieldNames) {
+    	for (String field : allFieldNames) {
     		detailList.add(new SimpleEntry<String, String>(field, ""));
     	}
     }
     
+	@Override
+	public int compareTo(Entry other) {
+		return this.getLastName().compareTo(other.getLastName());
+	}
+
+	@Override
+	public int compare(Entry e1, Entry e2) {
+		return (e1.getZip()).compareTo(e1.getZip());
+	}
+    
 	public void addUserFields(ArrayList<SimpleEntry<String, String>> userFields) {
         for (SimpleEntry<String, String> field : userFields) {
-        	fieldNames.add(field.getKey());
+        	allFieldNames.add(field.getKey());
         }
 	}
     

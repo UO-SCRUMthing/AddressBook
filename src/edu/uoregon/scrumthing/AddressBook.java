@@ -11,21 +11,20 @@ public class AddressBook extends EntryContainer<Entry> {
 	private List<Entry> sortedContactList = new ArrayList<Entry>();
 	private String sortedOn;
 	
-	@Override
-	public boolean isChanged() {
-		// TODO Auto-generated method stub
-		return true;
+	AddressBook() {
+		
 	}
 	
 	@Override
 	public boolean sortBy(String field) {
 		if (field == "name") {
-//			Collections.sort(sortedContactList, c);
+			Collections.sort(sortedContactList);
 			sortedOn = field;
 			return true;
 			
 		} else if (field == "zip") {
-//			Collections.sort(sortedContactList, c);
+			// according https://www.tutorialspoint.com/java/java_using_comparator.htm this should sort the array based on the compare(Entry e1, Entry e2) method which compares based on zip 
+			Collections.sort(sortedContactList, new Contact()); 
 			sortedOn = field;	
 			return true;
 		} 
@@ -48,29 +47,27 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
-	public List<SimpleEntry<String, String>> getTemplate() {
-		// TODO Auto-generated method stub
-		return null;
+	public Entry getTemplate() {
+		return new Contact();
 	}
 
 	@Override
 	public void removeEntry(int index) {
-		// TODO Auto-generated method stub
 		sortedContactList.remove(index);
 	}
 
 	@Override
 	public boolean setSortKey(String sortField) {
-		return false;
-		// TODO Auto-generated method stub
-		
+		if (sortField == "name" || sortField == "zip") {
+			sortedOn = sortField;
+			return true;	
+		} 
+		return false;		
 	}
 
 	@Override
 	public boolean sort() {
-		return false;
-		// TODO Auto-generated method stub
-		
+		return this.sortBy(sortedOn);		
 	}
 
 	@Override

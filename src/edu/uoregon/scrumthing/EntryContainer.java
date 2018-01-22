@@ -9,12 +9,7 @@ public abstract class EntryContainer<T extends Entry>{
 	public abstract List<T> getAll();
 	
 	// returns template for T class 
-	public abstract List<SimpleEntry<String, String>> getTemplate();
-	
-	/**
-	 * Return true if the content have be changed after last save.
-	 */
-	public abstract boolean isChanged();
+	public abstract Entry getTemplate();
 	
 	/**
 	 * Add an entry to the container.

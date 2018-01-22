@@ -12,9 +12,15 @@ public abstract class Controller {
 //	int ACTIVE_BOOK;
 	JFrame GUI;
 	String filePath;
+	private boolean modified = false;
+	
+	/**
+	 * Return true if the content have be changed after last save.
+	 */
+	public abstract boolean isChanged();
 	
 	// file operations
-	public abstract boolean createNewAddressBook();
+	public abstract void createNewAddressBook();
     	//creates and sets new address book to addressBook    
 		//appends to addressBook list if multiple books supported
     	//returns true if successful, false otherwise
@@ -39,7 +45,7 @@ public abstract class Controller {
 		//SetDetailPane with field info from model
     	//wait for parameterized AddNewEntry	
 	
-	public abstract boolean addNewEntryToModel(List<SimpleEntry<String, String>> details);
+	public abstract boolean addNewEntryToModel(Entry newEntry);
 		// pass details to addressBook data member 
 		// this two things seem to do very different things...
 	
@@ -52,8 +58,4 @@ public abstract class Controller {
 	// display operations 
 	public abstract void itemSelected(int index);
 		//set display through SetDetailPane	
-	
-	
-
-
 }

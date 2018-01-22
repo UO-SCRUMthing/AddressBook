@@ -1,11 +1,12 @@
 package edu.uoregon.scrumthing;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class Entry{
-	List<SimpleEntry> detailList;
+public abstract class Entry implements Comparator<Entry>, Comparable<Entry> {
+	List<SimpleEntry<String, String>> detailList;
 	
 	/**
 	 * Return a string as the entry's display name
@@ -30,5 +31,12 @@ public abstract class Entry{
 	public String toString() {
 		return getName();
 	}
-
+	
+    public abstract String getLastName(); 
+    
+    public abstract String getZip(); 
+	
+	public abstract int compareTo(Entry e);
+	
+	public abstract int compare(Entry e1, Entry e2);
 }
