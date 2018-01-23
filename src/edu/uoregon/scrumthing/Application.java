@@ -1,6 +1,8 @@
 package edu.uoregon.scrumthing;
 
 import java.util.HashMap;
+import java.util.List;
+
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import edu.uoregon.scrumthing.swingext.AddressBookGUI;
@@ -19,10 +21,14 @@ public class Application extends Controller {
 	    }catch(Exception ex) {
 	        ex.printStackTrace();
 	    }
-		TestContainer testData = new TestContainer();
-		AddressBookGUI gui = new AddressBookGUI(testData);
+	    Application app = new Application();
 	}
-
+	
+	public Application() {
+		createNewAddressBook();
+		AddressBookGUI gui = new AddressBookGUI(this);
+	}
+	
 	@Override
 	public void createNewAddressBook() {
 		// TODO create addressbook constructor
@@ -55,7 +61,7 @@ public class Application extends Controller {
 
 	@Override
 	public Entry createEmptyEntry() {
-		return new Contact();
+		return addressBook.getTemplate();
 	}
 
 	@Override
@@ -85,5 +91,10 @@ public class Application extends Controller {
 	public boolean isChanged() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public List<Entry> getEntryList() {
+		return addressBook.getAll();
 	}
 }

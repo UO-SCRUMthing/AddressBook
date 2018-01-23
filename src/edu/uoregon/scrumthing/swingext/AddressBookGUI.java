@@ -22,18 +22,19 @@ import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import edu.uoregon.scrumthing.Entry;
-import edu.uoregon.scrumthing.EntryContainer;
+import edu.uoregon.scrumthing.Controller;
 
-public class AddressBookGUI extends JFrame {
+public class AddressBookGUI<T> extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
-	private EntryContainer<?> data;
-
+	
+	private Controller controller;
 	private AddressDetailPanel detailPane;
 	
-	public AddressBookGUI(EntryContainer<?> data) {
+	// TODO: need controller
+	public AddressBookGUI(Controller controller) {
 		super("Address Book");
-		this.data = data;
+		// this.data = data;
+		this.controller = controller;
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setJMenuBar(createMenuBar());
@@ -68,13 +69,15 @@ public class AddressBookGUI extends JFrame {
 			itemNew.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					/*
 					try {
-						EntryContainer<?> newEmptyData = data.getClass().newInstance();
-						new AddressBookGUI(newEmptyData);
+						// TODO: reference controller
+						// EntryContainer<?> newEmptyData = data.getClass().newInstance();
+						// new AddressBookGUI(newEmptyData);
 					} catch (InstantiationException | IllegalAccessException e1) {
 						// TODO: Warn user
 						e1.printStackTrace();
-					}
+					}*/
 		
 				}
 			});
@@ -154,8 +157,8 @@ public class AddressBookGUI extends JFrame {
 	private JPanel createContentPane() {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		
-		EntryListModel list = new EntryListModel(data);
-		JList<Entry> nameList = new JList<Entry>(list);
+		ObjectListModel listModel = new ObjectListModel(controller.getEntryList());
+		JList<String> nameList = new JList<>(listModel);
 		JScrollPane splitLeft = new JScrollPane(nameList);
 		splitLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		splitLeft.setMinimumSize(new Dimension(100, 0));
@@ -176,7 +179,10 @@ public class AddressBookGUI extends JFrame {
 					detailPane = new AddressDetailPanel(null);
 					splitRight.setViewportView(detailPane);
 				} else {
-					detailPane = new AddressDetailPanel(list.getElementAt(e.getFirstIndex()));
+					// TODO: reference controller
+					/*
+					detailPane = new AddressDetailPanel(list.getElementAt(e.getFirstIndex()).getDetailList());
+					*/
 					splitRight.setViewportView(detailPane);
 				}
 				splitRight.revalidate();

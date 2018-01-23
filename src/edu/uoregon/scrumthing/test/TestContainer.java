@@ -30,8 +30,33 @@ public class TestContainer extends EntryContainer<TestEntry>{
 		}
 
 		@Override
-		public boolean updateDetail(HashMap<String, String> detailMap) {
-			return true;
+		public boolean updateDetails(HashMap<String, String> detailMap) {
+			// TODO Auto-generated method stub
+			return false;
+		}
+
+		@Override
+		public String getLastName() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getZip() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public int compareTo(Entry e) {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
+		@Override
+		public int compare(Entry e1, Entry e2) {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
 	}
@@ -48,25 +73,8 @@ public class TestContainer extends EntryContainer<TestEntry>{
 	}
 	
 	@Override
-	public boolean isChanged() {
-		return false;
-	}
-	
-	@Override
 	public boolean sortBy(String field) {
 		return true;
-		
-	}
-	
-	@Override
-	public void addEntry(TestEntry entry) {
-		testList.add(entry);
-	}
-	
-
-	@Override
-	public void removeEntry(TestEntry entry) {
-		testList.remove(entry);
 	}
 
 	@Override
@@ -77,6 +85,42 @@ public class TestContainer extends EntryContainer<TestEntry>{
 	@Override
 	public int getSize() {
 		return testList.size();
+	}
+
+	@Override
+	public List<TestEntry> getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Entry getTemplate() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addEntry(HashMap<String, String> details) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeEntry(int index) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean setSortKey(String sortField) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean sort() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

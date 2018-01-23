@@ -1,6 +1,5 @@
 package edu.uoregon.scrumthing;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.List;
 
@@ -58,4 +57,6 @@ public abstract class Controller {
 	// display operations 
 	public abstract void itemSelected(int index);
 		//set display through SetDetailPane	
+	
+	public abstract List<Entry> getEntryList();
 }
