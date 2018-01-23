@@ -1,12 +1,8 @@
 package edu.uoregon.scrumthing;
 
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
-import java.util.List;
-
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-
 import edu.uoregon.scrumthing.swingext.AddressBookGUI;
 import edu.uoregon.scrumthing.test.TestContainer;
 

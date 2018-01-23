@@ -10,6 +10,7 @@ public class AddressBook extends EntryContainer<Entry> {
 //	private HashMap<String, Contact> contacts = new HashMap<>();
 	private List<Entry> sortedContactList = new ArrayList<Entry>();
 	private String sortedOn;
+	private String addressBookName;
 	
 	AddressBook() {
 		

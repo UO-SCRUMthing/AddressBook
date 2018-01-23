@@ -13,11 +13,13 @@ public abstract class Entry implements Comparator<Entry>, Comparable<Entry> {
 	 * This string will be shown in the GUI contact list
 	 */
 	public abstract String getName();
+	
 	/**
 	 * Return a list of key-value pairs
 	 * GUI will display each field in the order of returned list.
 	 */
 	public abstract List<SimpleEntry<String, String>> getDetailList();
+	
 	/**
 	 * Update detail. 
 	 * 
