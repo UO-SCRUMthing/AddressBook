@@ -179,10 +179,7 @@ public class AddressBookGUI<T> extends JFrame {
 					detailPane = new AddressDetailPanel(null);
 					splitRight.setViewportView(detailPane);
 				} else {
-					// TODO: reference controller
-					/*
-					detailPane = new AddressDetailPanel(list.getElementAt(e.getFirstIndex()).getDetailList());
-					*/
+					detailPane = new AddressDetailPanel(controller, e.getFirstIndex());
 					splitRight.setViewportView(detailPane);
 				}
 				splitRight.revalidate();

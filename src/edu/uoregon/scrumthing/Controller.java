@@ -2,6 +2,7 @@ package edu.uoregon.scrumthing;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
 
 import javax.swing.JFrame;
 
@@ -55,7 +56,7 @@ public abstract class Controller {
 		// delete entry at index
 	
 	// display operations 
-	public abstract void itemSelected(int index);
+	public abstract List<SimpleEntry<String, String>> itemSelected(int index);
 		//set display through SetDetailPane	
 	
 	public abstract List<Entry> getEntryList();

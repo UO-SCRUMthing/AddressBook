@@ -2,6 +2,7 @@ package edu.uoregon.scrumthing;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.AbstractMap.SimpleEntry;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
@@ -82,8 +83,8 @@ public class Application extends Controller {
 	}
 
 	@Override
-	public void itemSelected(int index) {
-		// TODO Auto-generated method stub
+	public List<SimpleEntry<String, String>> itemSelected(int index) {
+		return addressBook.getEntry(index).getDetailList();
 		
 	}
 
