@@ -25,13 +25,15 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import edu.uoregon.scrumthing.Controller;
+import edu.uoregon.scrumthing.Entry;
 
-public class AddressBookGUI<T> extends JFrame {
+public class AddressBookGUI extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
 	
-	private Controller controller;
+	protected Controller controller;
 	private AddressDetailPanel detailPane;
 	private JList contactList;
+	private JScrollPane splitRight;
 	
 	// TODO: need controller
 	public AddressBookGUI(Controller controller) {
@@ -157,30 +159,47 @@ public class AddressBookGUI<T> extends JFrame {
 		        int state = e.getStateChange();
 		        if (state == ItemEvent.SELECTED) {
 		        	controller.sortBy((String)e.getItem());
-		        	System.out.println("Sorted by: " + (String)e.getItem());
 		        	// TODO: Add warning to user when editing. or disable sorting when editing
-		        	contactList.revalidate();
-		        	contactList.repaint();
+		        	updateList();
 		        }
 			}
 		});
 		toolbar.add(combo);
-		toolbar.add(new JButton("+"));
-		toolbar.add(new JButton("x"));
+		
+		JButton newEntryButton = new JButton("+");
+		JButton removeEntryButton = new JButton("x");
+		
+		newEntryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				splitRight.remove(detailPane);
+				contactList.clearSelection();
+
+				Entry template = controller.createEmptyEntry();
+				detailPane = new AddressDetailPanel(AddressBookGUI.this, template);
+				splitRight.setViewportView(detailPane);
+				
+				splitRight.revalidate();
+				splitRight.repaint();
+			}			
+		});
+		
+		toolbar.add(newEntryButton);
+		toolbar.add(removeEntryButton);
 		return toolbar;
 	}
 
 	private JPanel createContentPane() {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		
-		ObjectListModel listModel = new ObjectListModel(controller.getEntryList());
-		contactList = new JList<>(listModel);
+		contactList = new JList<>();
+		updateList();
 		JScrollPane splitLeft = new JScrollPane(contactList);
 		splitLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		splitLeft.setMinimumSize(new Dimension(100, 0));
 		splitLeft.setPreferredSize(new Dimension(150, 0));
 		
-		JScrollPane splitRight = new JScrollPane();
+		splitRight = new JScrollPane();
 		splitRight.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		splitRight.setMinimumSize(new Dimension(250, 0));
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitLeft, splitRight);
@@ -198,7 +217,7 @@ public class AddressBookGUI<T> extends JFrame {
 					detailPane = new AddressDetailPanel(null);
 					splitRight.setViewportView(detailPane);
 				} else {
-					detailPane = new AddressDetailPanel(controller, list.getMinSelectionIndex());
+					detailPane = new AddressDetailPanel(AddressBookGUI.this, list.getMinSelectionIndex());
 					splitRight.setViewportView(detailPane);
 				}
 				splitRight.revalidate();
@@ -227,6 +246,21 @@ public class AddressBookGUI<T> extends JFrame {
 	
 	public void close() {
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+	}
+	
+	protected void enterEditMode() {
+		
+	}
+	
+	protected void exitEditMode() {
+		updateList();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateList() {
+		contactList.setListData(controller.getEntryList().toArray());
+		contactList.revalidate();
+		contactList.repaint();
 	}
 	
 }

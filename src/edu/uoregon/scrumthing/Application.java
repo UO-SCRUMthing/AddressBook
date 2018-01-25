@@ -26,7 +26,7 @@ public class Application extends Controller {
 	}
 	
 	public Application() {
-		createNewAddressBook();
+		createNewAddressBook("New Address Book");
 		AddressBookGUI gui = new AddressBookGUI(this);
 	}
 	
@@ -95,8 +95,6 @@ public class Application extends Controller {
 
 	@Override
 	public List<SimpleEntry<String, String>> itemSelected(int index) {
-		System.out.println(index);
-		System.out.println(addressBook.getEntry(index).getDetailList().get(0).getValue());
 		return addressBook.getEntry(index).getDetailList();
 		
 	}

@@ -100,18 +100,6 @@ public class TestContainer extends EntryContainer<TestEntry>{
 	}
 
 	@Override
-	public void addEntry(HashMap<String, String> details) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeEntry(int index) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
 	public boolean setSortKey(String sortField) {
 		// TODO Auto-generated method stub
 		return false;
@@ -121,6 +109,18 @@ public class TestContainer extends EntryContainer<TestEntry>{
 	public boolean sort() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public void deleteEntry(int index) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addEntry(Entry entry) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }
