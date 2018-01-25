@@ -31,13 +31,23 @@ public class Application extends Controller {
 	}
 	
 	@Override
+	public void createNewAddressBook(String name) {
+		addressBook = new AddressBook(name);
+	}
+	
+	@Override
 	public void createNewAddressBook() {
-		// TODO create addressbook constructor
 		addressBook = new AddressBook();
 	}
 
 	@Override
 	public boolean openAddressBook(String fileName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	@Override
+	public boolean importAddressBook(String fileName) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -49,7 +59,7 @@ public class Application extends Controller {
 	}
 
 	@Override
-	public boolean saveAddressBook(String fileName) {
+	public boolean saveAddressBook(String filePath) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -66,20 +76,21 @@ public class Application extends Controller {
 	}
 
 	@Override
-	public boolean addNewEntryToModel(Entry newEntry) {
-		return false;
+	public void addNewEntry(Entry newEntry) {
+		modified = true;
+		addressBook.addEntry(newEntry);
 	}
 
 	@Override
-	public boolean updateEntry(int index, HashMap<String, String> details) {
-		// TODO Auto-generated method stub
-		return false;
+	public void updateEntry(int index, HashMap<String, String> details) {
+		modified = true;
+		addressBook.getEntry(index).updateDetails(details);
 	}
 
 	@Override
-	public boolean deleteEntry(int index) {
-		// TODO Auto-generated method stub
-		return false;
+	public void deleteEntry(int index) {
+		modified = true;
+		addressBook.deleteEntry(index);
 	}
 
 	@Override
@@ -92,8 +103,7 @@ public class Application extends Controller {
 
 	@Override
 	public boolean isChanged() {
-		// TODO Auto-generated method stub
-		return false;
+		return modified;
 	}
 
 	@Override

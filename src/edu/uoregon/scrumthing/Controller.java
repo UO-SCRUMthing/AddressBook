@@ -20,14 +20,18 @@ public abstract class Controller {
 	public abstract boolean isChanged();
 	
 	// file operations
-	public abstract void createNewAddressBook();
+	public abstract void createNewAddressBook(String name);
     	//creates and sets new address book to addressBook    
 		//appends to addressBook list if multiple books supported
     	//returns true if successful, false otherwise
 	
+	public abstract void createNewAddressBook(); 
+	
 	public abstract boolean openAddressBook(String fileName);
 		//sets filePath
     	//returns true if filename successfully found and parsed, false otherwise
+	
+	public abstract boolean importAddressBook(String fileName);
 	
 	public abstract boolean saveAddressBook();
 		//checks for recorded filename: if found, save to filename; if not request filename from GUI
@@ -45,14 +49,13 @@ public abstract class Controller {
 		//SetDetailPane with field info from model
     	//wait for parameterized AddNewEntry	
 	
-	public abstract boolean addNewEntryToModel(Entry newEntry);
+	public abstract void addNewEntry(Entry newEntry);
 		// pass details to addressBook data member 
-		// this two things seem to do very different things...
 	
-	public abstract boolean updateEntry(int index, HashMap<String, String> details);
+	public abstract void updateEntry(int index, HashMap<String, String> details);
 		// pass details to entry found at index
 	
-	public abstract boolean deleteEntry(int index);
+	public abstract void deleteEntry(int index);
 		// delete entry at index
 	
 	// display operations 

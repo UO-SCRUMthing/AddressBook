@@ -12,19 +12,11 @@ public abstract class EntryContainer<T extends Entry>{
 	public abstract Entry getTemplate();
 	
 	/**
-	 * Add an entry to the container.
-	 * @param <K>
-	 * 
-	 * @param entry  The entry needs to be added to the container.
-	 */
-	public abstract void addEntry(HashMap<String, String> details);
-	
-	/**
 	 * Remove an entry
 	 * 
 	 * @param index of  The entry object that needs to be removed from the container.
 	 */
-	public abstract void removeEntry(int index);
+	public abstract void deleteEntry(int index);
 	
 	public abstract boolean setSortKey(String sortField);
 	
@@ -47,4 +39,12 @@ public abstract class EntryContainer<T extends Entry>{
 	 * Return the size of the container
 	 */
 	public abstract int getSize();
+
+	/**
+	 * Add an entry to the container.
+	 * @param <K>
+	 * 
+	 * @param entry  The entry needs to be added to the container.
+	 */
+	public abstract void addEntry(Entry entry); 
 }

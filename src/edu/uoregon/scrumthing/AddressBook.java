@@ -1,8 +1,6 @@
 package edu.uoregon.scrumthing;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -11,9 +9,22 @@ public class AddressBook extends EntryContainer<Entry> {
 	private List<Entry> sortedContactList = new ArrayList<Entry>();
 	private String sortedOn;
 	private String addressBookName;
+
+	public AddressBook(String name) {
+		// TODO finish contractor 
+		this.setAddressBookName(name);
+	}
 	
-	AddressBook() {
-		
+	public AddressBook() {
+		// TODO Auto-generated constructor stub
+	}
+
+	public String getAddressBookName() {
+		return addressBookName;
+	}
+
+	public void setAddressBookName(String addressBookName) {
+		this.addressBookName = addressBookName;
 	}
 	
 	@Override
@@ -53,7 +64,7 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
-	public void removeEntry(int index) {
+	public void deleteEntry(int index) {
 		sortedContactList.remove(index);
 	}
 
@@ -72,8 +83,8 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
-	public void addEntry(HashMap<String, String> details) {
-		// TODO Auto-generated method stub
-		
+	public void addEntry(Entry entry) {
+		sortedContactList.add(entry);
+		this.sort();
 	}
 }
