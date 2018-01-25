@@ -60,4 +60,6 @@ public abstract class Controller {
 		//set display through SetDetailPane	
 	
 	public abstract List<Entry> getEntryList();
+	
+	public abstract void sortBy(String field);
 }

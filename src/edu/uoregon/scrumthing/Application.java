@@ -84,6 +84,8 @@ public class Application extends Controller {
 
 	@Override
 	public List<SimpleEntry<String, String>> itemSelected(int index) {
+		System.out.println(index);
+		System.out.println(addressBook.getEntry(index).getDetailList().get(0).getValue());
 		return addressBook.getEntry(index).getDetailList();
 		
 	}
@@ -97,5 +99,10 @@ public class Application extends Controller {
 	@Override
 	public List<Entry> getEntryList() {
 		return addressBook.getAll();
+	}
+
+	@Override
+	public void sortBy(String field) {
+		addressBook.sortBy(field);
 	}
 }

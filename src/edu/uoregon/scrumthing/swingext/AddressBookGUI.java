@@ -5,6 +5,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 
@@ -29,6 +31,7 @@ public class AddressBookGUI<T> extends JFrame {
 	
 	private Controller controller;
 	private AddressDetailPanel detailPane;
+	private JList contactList;
 	
 	// TODO: need controller
 	public AddressBookGUI(Controller controller) {
@@ -146,8 +149,21 @@ public class AddressBookGUI<T> extends JFrame {
 		JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		JComboBox<String> combo = new JComboBox<String>();
 		combo.setPreferredSize(new Dimension(100,20));
-		combo.addItem("Name");
-		combo.addItem("ZIP");
+		combo.addItem("name");
+		combo.addItem("zip");
+		combo.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+		        int state = e.getStateChange();
+		        if (state == ItemEvent.SELECTED) {
+		        	controller.sortBy((String)e.getItem());
+		        	System.out.println("Sorted by: " + (String)e.getItem());
+		        	// TODO: Add warning to user when editing. or disable sorting when editing
+		        	contactList.revalidate();
+		        	contactList.repaint();
+		        }
+			}
+		});
 		toolbar.add(combo);
 		toolbar.add(new JButton("+"));
 		toolbar.add(new JButton("x"));
@@ -158,8 +174,8 @@ public class AddressBookGUI<T> extends JFrame {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		
 		ObjectListModel listModel = new ObjectListModel(controller.getEntryList());
-		JList<String> nameList = new JList<>(listModel);
-		JScrollPane splitLeft = new JScrollPane(nameList);
+		contactList = new JList<>(listModel);
+		JScrollPane splitLeft = new JScrollPane(contactList);
 		splitLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		splitLeft.setMinimumSize(new Dimension(100, 0));
 		splitLeft.setPreferredSize(new Dimension(150, 0));
@@ -169,17 +185,20 @@ public class AddressBookGUI<T> extends JFrame {
 		splitRight.setMinimumSize(new Dimension(250, 0));
 		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, splitLeft, splitRight);
 		
-		nameList.addListSelectionListener(new ListSelectionListener() {
+		contactList.addListSelectionListener(new ListSelectionListener() {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
+				@SuppressWarnings("rawtypes")
+				JList list = (JList)e.getSource();
+
 				if (e.getValueIsAdjusting()) return;
 				splitRight.remove(detailPane);
-				if (e.getFirstIndex() < 0) {
+				if (list.getMinSelectionIndex() < 0) {
 					detailPane = new AddressDetailPanel(null);
 					splitRight.setViewportView(detailPane);
 				} else {
-					detailPane = new AddressDetailPanel(controller, e.getFirstIndex());
+					detailPane = new AddressDetailPanel(controller, list.getMinSelectionIndex());
 					splitRight.setViewportView(detailPane);
 				}
 				splitRight.revalidate();
