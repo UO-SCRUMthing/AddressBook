@@ -118,7 +118,7 @@ public class TestContainer extends EntryContainer<TestEntry>{
 	}
 
 	@Override
-	public void addEntry(Entry entry) {
+	public void addEntry(TestEntry entry) {
 		// TODO Auto-generated method stub
 		
 	}

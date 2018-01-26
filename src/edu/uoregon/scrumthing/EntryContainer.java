@@ -46,5 +46,5 @@ public abstract class EntryContainer<T extends Entry>{
 	 * 
 	 * @param entry  The entry needs to be added to the container.
 	 */
-	public abstract void addEntry(Entry entry); 
+	public abstract void addEntry(T entry); 
 }

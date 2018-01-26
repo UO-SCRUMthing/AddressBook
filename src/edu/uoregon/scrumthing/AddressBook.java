@@ -1,12 +1,13 @@
 package edu.uoregon.scrumthing;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
-public class AddressBook extends EntryContainer<Entry> {
+public class AddressBook extends EntryContainer<Contact> {
 //	private HashMap<String, Contact> contacts = new HashMap<>();
-	private List<Entry> sortedContactList = new ArrayList<Entry>();
+	private List<Contact> sortedContactList = new ArrayList<Contact>();
 	private String sortedOn;
 	private String addressBookName;
 
@@ -30,13 +31,23 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public boolean sortBy(String field) {
 		if (field == "name") {
-			Collections.sort(sortedContactList);
+			sortedContactList.sort(new Comparator<Contact>() {
+				@Override
+				public int compare(Contact o1, Contact o2) {
+					return o1.getLastName().compareTo(o2.getLastName());
+				}
+			});
 			sortedOn = field;
 			return true;
 			
 		} else if (field == "zip") {
 			// according https://www.tutorialspoint.com/java/java_using_comparator.htm this should sort the array based on the compare(Entry e1, Entry e2) method which compares based on zip 
-			Collections.sort(sortedContactList, new Contact()); 
+			sortedContactList.sort(new Comparator<Contact>() {
+				@Override
+				public int compare(Contact o1, Contact o2) {
+					return o1.getZip().compareTo(o2.getZip());
+				}
+			});
 			sortedOn = field;	
 			return true;
 		} 
@@ -44,7 +55,7 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 	
 	@Override
-	public Entry getEntry(int index) {
+	public Contact getEntry(int index) {
 		return sortedContactList.get(index);
 	}
 	
@@ -54,7 +65,7 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
-	public List<Entry> getAll() {
+	public List<Contact> getAll() {
 		return sortedContactList;
 	}
 
@@ -83,7 +94,7 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
-	public void addEntry(Entry entry) {
+	public void addEntry(Contact entry) {
 		sortedContactList.add(entry);
 		this.sort();
 	}

@@ -10,7 +10,8 @@ import edu.uoregon.scrumthing.swingext.AddressBookGUI;
 import edu.uoregon.scrumthing.test.TestContainer;
 
 public class Application extends Controller {
-	EntryContainer<Entry> addressBook; // List<EntryContainer<Entry>> if multiple books supported
+	@SuppressWarnings("rawtypes")
+	EntryContainer addressBook; // List<EntryContainer<Entry>> if multiple books supported
 //	int ACTIVE_BOOK;
 	JFrame GUI;
 	String filePath;
@@ -75,6 +76,7 @@ public class Application extends Controller {
 		return addressBook.getTemplate();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void addNewEntry(Entry newEntry) {
 		modified = true;
@@ -104,6 +106,7 @@ public class Application extends Controller {
 		return modified;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Entry> getEntryList() {
 		return addressBook.getAll();
