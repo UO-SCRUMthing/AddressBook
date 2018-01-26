@@ -281,12 +281,23 @@ public class AddressBookGUI extends JFrame {
 		editing = true;
 	}
 	
-	protected void exitEditMode() {
+	protected void exitEditMode(boolean selectNew) {
 		for (JComponent comp : disableComponents) {
 			comp.setEnabled(true);
 		}
 		editing = false;
 		updateList();
+		if (selectNew) {
+			if (!controller.getEntryList().isEmpty())
+				contactList.setSelectedIndex(controller.getEntryList().size() - 1);
+		}
+	}
+	
+	protected void removeDetailPanel() {
+		detailPane = new AddressDetailPanel(null);
+		splitRight.setViewportView(detailPane);
+		splitRight.revalidate();
+		splitRight.repaint();
 	}
 	
 	@SuppressWarnings("unchecked")

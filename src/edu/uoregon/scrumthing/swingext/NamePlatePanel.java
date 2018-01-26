@@ -49,7 +49,7 @@ public class NamePlatePanel extends JPanel {
 		if (firstField.getText().isEmpty() && lastField.getText().isEmpty() ) {
 			name = "New Contact";
 		} else if (firstField.getText().isEmpty()) {
-			name = firstField.getText();
+			name = lastField.getText();
 		} else {
 			name = firstField.getText() + " " + lastField.getText();
 		}

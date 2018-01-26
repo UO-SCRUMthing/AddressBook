@@ -53,10 +53,15 @@ public class TestContainer extends EntryContainer<TestEntry>{
 			return 0;
 		}
 
-		@Override
 		public int compare(Entry e1, Entry e2) {
 			// TODO Auto-generated method stub
 			return 0;
+		}
+
+		@Override
+		public String toString() {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}

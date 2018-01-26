@@ -171,16 +171,18 @@ public class AddressDetailPanel extends JPanel {
 		} else if (index >= 0){
 			gui.controller.updateEntry(index, getAllFields());
 		}
-		exitEditMode();
+		exitEditMode(true);
 	}
 	
 	private void discardChange() {
-		exitEditMode();
-		updateFieldFromDetail();
+		exitEditMode(false);
+		if (index == NEW) gui.removeDetailPanel();
+		else updateFieldFromDetail();
+
 	}
 	
 	@SuppressWarnings("rawtypes")
-	private void exitEditMode() {
+	private void exitEditMode(boolean saved) {
 		editMode = false;
 		editButtonSet.removeAll();
 		editButtonSet.add(editButton);
@@ -194,7 +196,14 @@ public class AddressDetailPanel extends JPanel {
 	        JComponent field = (JComponent)pair.getValue();
 	        field.setEnabled(false);
 	    }
-	    gui.exitEditMode();
+	    if (saved && index == NEW) {
+	    		gui.exitEditMode(true);
+	    } else {
+	    		gui.exitEditMode(false);
+	    }
+	    
+	
+	    
 	}
 	
 	@SuppressWarnings("rawtypes")
