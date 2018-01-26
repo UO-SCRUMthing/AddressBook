@@ -278,6 +278,7 @@ public class AddressBookGUI extends JFrame {
 		for (JComponent comp : disableComponents) {
 			comp.setEnabled(false);
 		}
+		contactList.setEnabled(false);
 		editing = true;
 	}
 	
@@ -286,6 +287,7 @@ public class AddressBookGUI extends JFrame {
 			comp.setEnabled(true);
 		}
 		editing = false;
+		contactList.setEnabled(true);
 		updateList();
 		if (selectNew) {
 			if (!controller.getEntryList().isEmpty())
