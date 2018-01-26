@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class Entry implements Comparator<Entry>, Comparable<Entry> {
+public abstract class Entry implements Comparable<Entry>{
 	List<SimpleEntry<String, String>> detailList;
 	
 	/**
@@ -30,15 +30,24 @@ public abstract class Entry implements Comparator<Entry>, Comparable<Entry> {
 	public abstract boolean updateDetails(HashMap<String, String> detailMap);
 	
 	@Override
-	public String toString() {
-		return getName();
-	}
+	public abstract String toString();
+	
+	public static Comparator<Entry> entryZip = new Comparator<Entry>() {
+
+		@Override
+		public int compare(Entry e1, Entry e2) {
+			return e1.getZip().compareToIgnoreCase(e2.getZip());
+		}
+		 
+	};
 	
     public abstract String getLastName(); 
     
-    public abstract String getZip(); 
+    public abstract String getZip();
+
+	@Override
+	public int compareTo(Entry other) {
+		return this.getLastName().compareToIgnoreCase(other.getLastName());
+	}
 	
-	public abstract int compareTo(Entry e);
-	
-	public abstract int compare(Entry e1, Entry e2);
 }

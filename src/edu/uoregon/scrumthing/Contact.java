@@ -3,10 +3,11 @@ package edu.uoregon.scrumthing;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public class Contact extends Entry {
+public class Contact extends Entry implements Comparable<Entry> {
     private List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
     private static List<String> defaultFields = Arrays.asList("firstName", "lastName", "address", "city", "state", "zip", "email", "phoneNumber");
     private ArrayList<String> allFieldNames = new ArrayList<String>(defaultFields);
@@ -42,16 +43,6 @@ public class Contact extends Entry {
     		detailList.add(new SimpleEntry<String, String>(field, ""));
     	}
     }
-    
-	@Override
-	public int compareTo(Entry other) {
-		return this.getLastName().compareTo(other.getLastName());
-	}
-
-	@Override
-	public int compare(Entry e1, Entry e2) {
-		return (e1.getZip()).compareTo(e1.getZip());
-	}
     
 	public void addUserFields(ArrayList<SimpleEntry<String, String>> userFields) {
         for (SimpleEntry<String, String> field : userFields) {

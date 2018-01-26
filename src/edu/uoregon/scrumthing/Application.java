@@ -96,7 +96,6 @@ public class Application extends Controller {
 	@Override
 	public List<SimpleEntry<String, String>> itemSelected(int index) {
 		return addressBook.getEntry(index).getDetailList();
-		
 	}
 
 	@Override

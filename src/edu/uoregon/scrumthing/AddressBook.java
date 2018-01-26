@@ -35,8 +35,7 @@ public class AddressBook extends EntryContainer<Entry> {
 			return true;
 			
 		} else if (field == "zip") {
-			// according https://www.tutorialspoint.com/java/java_using_comparator.htm this should sort the array based on the compare(Entry e1, Entry e2) method which compares based on zip 
-			Collections.sort(sortedContactList, new Contact()); 
+			Collections.sort(sortedContactList, Entry.entryZip); 
 			sortedOn = field;	
 			return true;
 		} 
