@@ -9,9 +9,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -34,12 +36,19 @@ public class AddressBookGUI extends JFrame {
 	private AddressDetailPanel detailPane;
 	private JList contactList;
 	private JScrollPane splitRight;
+	private int selectedIndex;
+	private boolean editing;
+	
+	private ArrayList<JComponent> disableComponents;
 	
 	// TODO: need controller
 	public AddressBookGUI(Controller controller) {
 		super("Address Book");
 		// this.data = data;
+		this.disableComponents = new ArrayList<JComponent>();
+		this.editing = false;
 		this.controller = controller;
+		this.selectedIndex = -1;
 		
 		this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		this.setJMenuBar(createMenuBar());
@@ -165,6 +174,8 @@ public class AddressBookGUI extends JFrame {
 			}
 		});
 		toolbar.add(combo);
+		// Disable sort while editing
+		disableComponents.add(combo);
 		
 		JButton newEntryButton = new JButton("+");
 		JButton removeEntryButton = new JButton("x");
@@ -173,6 +184,7 @@ public class AddressBookGUI extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				splitRight.remove(detailPane);
+				selectedIndex = -1;
 				contactList.clearSelection();
 
 				Entry template = controller.createEmptyEntry();
@@ -186,6 +198,8 @@ public class AddressBookGUI extends JFrame {
 		
 		toolbar.add(newEntryButton);
 		toolbar.add(removeEntryButton);
+		disableComponents.add(newEntryButton);
+		disableComponents.add(removeEntryButton);
 		return toolbar;
 	}
 
@@ -208,16 +222,15 @@ public class AddressBookGUI extends JFrame {
 
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-				@SuppressWarnings("rawtypes")
-				JList list = (JList)e.getSource();
-
 				if (e.getValueIsAdjusting()) return;
 				splitRight.remove(detailPane);
-				if (list.getMinSelectionIndex() < 0) {
+				selectedIndex = contactList.getMinSelectionIndex();
+				if (selectedIndex < 0) {
+					selectedIndex = -1;
 					detailPane = new AddressDetailPanel(null);
 					splitRight.setViewportView(detailPane);
 				} else {
-					detailPane = new AddressDetailPanel(AddressBookGUI.this, list.getMinSelectionIndex());
+					detailPane = new AddressDetailPanel(AddressBookGUI.this, selectedIndex);
 					splitRight.setViewportView(detailPane);
 				}
 				splitRight.revalidate();
@@ -249,18 +262,27 @@ public class AddressBookGUI extends JFrame {
 	}
 	
 	protected void enterEditMode() {
-		
+		for (JComponent comp : disableComponents) {
+			comp.setEnabled(false);
+		}
+		editing = true;
 	}
 	
 	protected void exitEditMode() {
+		for (JComponent comp : disableComponents) {
+			comp.setEnabled(true);
+		}
+		editing = false;
 		updateList();
 	}
 	
 	@SuppressWarnings("unchecked")
 	private void updateList() {
+		int lastSelected = selectedIndex;
 		contactList.setListData(controller.getEntryList().toArray());
 		contactList.revalidate();
 		contactList.repaint();
+		contactList.setSelectedIndex(lastSelected);
 	}
 	
 }

@@ -68,10 +68,12 @@ public class NamePlatePanel extends JPanel {
 		if (editMode != edit) {
 			if (edit) {
 				this.removeAll();
+				add(Box.createHorizontalStrut(15));
 				add(firstField);
 				add(lastField);
 			} else if (!edit) {
 				this.removeAll();
+				add(Box.createHorizontalStrut(15));
 				add(namePlate);
 				updateNamePlate();
 			}
