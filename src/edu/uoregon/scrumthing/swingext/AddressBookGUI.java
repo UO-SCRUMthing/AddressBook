@@ -196,6 +196,19 @@ public class AddressBookGUI extends JFrame {
 			}			
 		});
 		
+		removeEntryButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int deletingIndex = selectedIndex;
+				// TODO: notify user nothing changed
+				if (deletingIndex < 0) return;
+				contactList.clearSelection();
+				selectedIndex = -1;
+				controller.deleteEntry(deletingIndex);
+				updateList();
+			}
+		});
+		
 		toolbar.add(newEntryButton);
 		toolbar.add(removeEntryButton);
 		disableComponents.add(newEntryButton);
