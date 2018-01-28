@@ -1,10 +1,11 @@
 package edu.uoregon.scrumthing;
 
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class EntryContainer<T extends Entry>{
+public abstract class EntryContainer<T extends Entry> {
 	
 	public abstract List<T> getAll();
 	
@@ -46,5 +47,15 @@ public abstract class EntryContainer<T extends Entry>{
 	 * 
 	 * @param entry  The entry needs to be added to the container.
 	 */
-	public abstract void addEntry(Entry entry); 
+	public abstract void addEntry(Entry entry);
+
+	public abstract String getAddressBookName();
+
+	public abstract void setAddressBookName(String addressBookName);
+
+	public abstract List<Entry> search(String lastName);
+
+	public abstract List<Entry> search(String firstName, String lastName);
+
+	public abstract void deleteEntry(Entry entry);
 }

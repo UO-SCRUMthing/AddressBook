@@ -19,6 +19,8 @@ public abstract class Controller {
 	 */
 	public abstract boolean isChanged();
 	
+	public abstract String getAddressBookName();
+	
 	// file operations
 	public abstract void createNewAddressBook(String name);
     	//creates and sets new address book to addressBook    

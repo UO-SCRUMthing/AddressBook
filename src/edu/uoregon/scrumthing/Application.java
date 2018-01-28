@@ -7,7 +7,6 @@ import java.util.AbstractMap.SimpleEntry;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import edu.uoregon.scrumthing.swingext.AddressBookGUI;
-import edu.uoregon.scrumthing.test.TestContainer;
 
 public class Application extends Controller {
 	EntryContainer<Entry> addressBook; // List<EntryContainer<Entry>> if multiple books supported
@@ -111,5 +110,10 @@ public class Application extends Controller {
 	@Override
 	public void sortBy(String field) {
 		addressBook.sortBy(field);
+	}
+
+	@Override
+	public String getAddressBookName() {
+		return addressBook.getAddressBookName();
 	}
 }
