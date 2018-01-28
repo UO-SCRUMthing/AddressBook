@@ -9,41 +9,46 @@ import java.util.List;
 
 public class Contact extends Entry implements Comparable<Entry> {
     private List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
-    private static List<String> defaultFields = Arrays.asList("firstName", "lastName", "address", "city", "state", "zip", "email", "phoneNumber");
+    private static List<String> defaultFields = Arrays.asList("firstName", "lastName", "address1", "address2", "city", "state", "zip", "email", "phoneNumber");
 //    private static List<String> defaultFields = Arrays.asList("First Name", "Last Name", "Address", "City", "State", "Zip", "Email", "Phone Number");
     private ArrayList<String> allFieldNames = new ArrayList<String>(defaultFields);
-
-//    public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber, List<SimpleEntry<String, String>> _userFields) {
-//        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
-//        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
-//        detailList.add(new SimpleEntry<String, String>("address", _address));
-//        detailList.add(new SimpleEntry<String, String>("city", _city));
-//        detailList.add(new SimpleEntry<String, String>("state", _state));
-//        detailList.add(new SimpleEntry<String, String>("zip", _zip));
-//        detailList.add(new SimpleEntry<String, String>("email", _email));
-//        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
-//        detailList.addAll(_userFields);
-//        for (SimpleEntry<String, String> field : _userFields) {
-//        	allFieldNames.add(field.getKey());
-//        }
-//    }
-//    
-//    public Contact(String _firstName, String _lastName, String _address, String _city, String _state, String _zip, String _email, String _phoneNumber) {
-//        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
-//        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
-//        detailList.add(new SimpleEntry<String, String>("address", _address));
-//        detailList.add(new SimpleEntry<String, String>("city", _city));
-//        detailList.add(new SimpleEntry<String, String>("state", _state));
-//        detailList.add(new SimpleEntry<String, String>("zip", _zip));
-//        detailList.add(new SimpleEntry<String, String>("email", _email));
-//        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
-//    }
+    
+    public Contact(String _firstName, String _lastName, String _address1, String _address2, String _city, String _state, String _zip, String _phoneNumber, String _email) {
+        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
+        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
+        detailList.add(new SimpleEntry<String, String>("address1", _address1));
+        detailList.add(new SimpleEntry<String, String>("address2", _address2));
+        detailList.add(new SimpleEntry<String, String>("city", _city));
+        detailList.add(new SimpleEntry<String, String>("state", _state));
+        detailList.add(new SimpleEntry<String, String>("zip", _zip));
+        detailList.add(new SimpleEntry<String, String>("email", _email));
+        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
+    }
+    
+    public Contact(String _firstName, String _lastName, String _address1, String _address2, String _city, String _state, String _zip, String _phoneNumber) {
+        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
+        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
+        detailList.add(new SimpleEntry<String, String>("address1", _address1));
+        detailList.add(new SimpleEntry<String, String>("address2", _address2));
+        detailList.add(new SimpleEntry<String, String>("city", _city));
+        detailList.add(new SimpleEntry<String, String>("state", _state));
+        detailList.add(new SimpleEntry<String, String>("zip", _zip));
+        detailList.add(new SimpleEntry<String, String>("email", ""));
+        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
+    }
     
     public Contact() {
     	for (String field : allFieldNames) {
-    		detailList.add(new SimpleEntry<String, String>(field, null));
+    		detailList.add(new SimpleEntry<String, String>(field, ""));
     	}
     }
+    
+    @Override
+	public String toTabString() {
+		return detailList.get(4).getValue() + "\t" + detailList.get(5).getValue() + "\t" + detailList.get(6).getValue() + "\t" + 
+				detailList.get(2).getValue() + "\t" + detailList.get(3).getValue() + "\t" + detailList.get(1).getValue() + "\t" + 
+				detailList.get(0).getValue() + "\t" + detailList.get(8).getValue() + "\t" + detailList.get(7).getValue();
+	}
     
 	public void addUserFields(ArrayList<SimpleEntry<String, String>> userFields) {
         for (SimpleEntry<String, String> field : userFields) {
@@ -51,10 +56,12 @@ public class Contact extends Entry implements Comparable<Entry> {
         }
 	}
     
+    @Override
     public String getLastName() {
     	return detailList.get(1).getValue();
     }
     
+    @Override
     public String getZip() {
     	return detailList.get(5).getValue();
     }
@@ -86,4 +93,5 @@ public class Contact extends Entry implements Comparable<Entry> {
 	public String toString() {
 		return this.getName();
 	}
+	
 }

@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import static java.util.Comparator.*;
 
 public class AddressBook extends EntryContainer<Entry> {
 	private HashMap<String, ArrayList<Entry>> searchableContacts = new HashMap<String, ArrayList<Entry>>();
@@ -31,7 +30,6 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public List<Entry> search(String firstName, String lastName) {
 		List<Entry> searchResults = new ArrayList<Entry>();
-		
 		return searchResults;
 		
 	}
@@ -50,13 +48,11 @@ public class AddressBook extends EntryContainer<Entry> {
 	public boolean sortBy(String field) {
 		if (field == "name") {
 			Collections.sort(sortedContactList, Entry.compareName);
-//			sortedContactList.sort(nullsLast(comparing(Entry::getName, naturalOrder())));
 			sortedOn = field;
 			return true;
 			
 		} else if (field == "zip") {
 			Collections.sort(sortedContactList, Entry.compareZip); 
-//			sortedContactList.sort(comparing(Entry::getZip, nullsLast(Entry.compareZip)));
 			sortedOn = field;	
 			return true;
 		} 
@@ -110,6 +106,5 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public void addEntry(Entry entry) {
 		sortedContactList.add(entry);
-		this.sort();
 	}
 }
