@@ -7,17 +7,19 @@ import java.util.AbstractMap.SimpleEntry;
 
 import javax.swing.JFrame;
 
+import edu.uoregon.scrumthing.ControllerPool.ControllerNode;
+
 public abstract class Controller {
 	
 	public abstract String getAddressBookName();
 	
 	// file operations
-	public abstract void createNewAddressBook(String name);
+	public abstract Controller createNewAddressBook(String name);
     	//creates and sets new address book to addressBook    
 		//appends to addressBook list if multiple books supported
     	//returns true if successful, false otherwise
 	
-	public abstract void createNewAddressBook(); 
+	public abstract Controller createNewAddressBook(); 
 	
 	public abstract int openAddressBook(String fileName);
 		//sets filePath
@@ -57,4 +59,8 @@ public abstract class Controller {
 	public abstract List<Entry> getEntryList();
 	
 	public abstract void sortBy(String field);
+	
+	// use to remove itself from the application pool
+	public abstract void registerNode(ControllerNode node);
+	public abstract void closeAllAddressBook();
 }

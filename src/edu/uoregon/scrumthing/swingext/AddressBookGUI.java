@@ -9,11 +9,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -25,12 +27,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.uoregon.scrumthing.Controller;
 import edu.uoregon.scrumthing.Entry;
 
 public class AddressBookGUI extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
+	private static final String SaveFileExtension = "tsv";
+	private static final String ImportFileExtension = "tsv";
 	
 	protected Controller controller;
 	private AddressDetailPanel detailPane;
@@ -61,9 +66,7 @@ public class AddressBookGUI extends JFrame {
 		
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
-            	if (!saveChange()) return;
-            	AddressBookGUI.this.dispose();
-            	
+            		controller.closeAddressBook();
             }
         });
         
@@ -83,16 +86,8 @@ public class AddressBookGUI extends JFrame {
 			itemNew.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					/*
-					try {
-						// TODO: reference controller
-						// EntryContainer<?> newEmptyData = data.getClass().newInstance();
-						// new AddressBookGUI(newEmptyData);
-					} catch (InstantiationException | IllegalAccessException e1) {
-						// TODO: Warn user
-						e1.printStackTrace();
-					}*/
-		
+					// TODO: name input
+					controller.createNewAddressBook();
 				}
 			});
 			
@@ -101,7 +96,14 @@ public class AddressBookGUI extends JFrame {
 			itemOpen.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO: Implement open
+					JFileChooser fileDiag = new JFileChooser();
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
+					fileDiag.setFileFilter(filter);
+				    int returnVal = fileDiag.showOpenDialog(AddressBookGUI.this);
+				    if(returnVal == JFileChooser.APPROVE_OPTION) {
+				    		Controller newApp = controller.createNewAddressBook();
+				    		newApp.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath());
+				    }
 				}
 			});
 			
@@ -110,7 +112,7 @@ public class AddressBookGUI extends JFrame {
 			itemSave.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO: Implement save
+					controller.saveAddressBook();
 				}
 			});
 			
@@ -119,7 +121,16 @@ public class AddressBookGUI extends JFrame {
 			itemSaveAs.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO: Implement save as
+					JFileChooser fileDiag = new JFileChooser();
+					FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
+					fileDiag.setFileFilter(filter);
+				    int returnVal = fileDiag.showSaveDialog(AddressBookGUI.this);
+				    if(returnVal == JFileChooser.APPROVE_OPTION) {
+				    		// Add a extension if there isn't one
+				    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
+				    	   	if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
+				    	   	controller.saveAsAddressBook(filename);
+				    }
 				}
 			});
 			
@@ -128,6 +139,7 @@ public class AddressBookGUI extends JFrame {
 			itemClose.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					// Trigger window closing events
 					close();
 				}
 			});
@@ -137,8 +149,7 @@ public class AddressBookGUI extends JFrame {
 			itemQuit.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// TODO: close all
-					System.exit(0);
+					controller.closeAllAddressBook();
 				}
 			});
 		
@@ -266,10 +277,6 @@ public class AddressBookGUI extends JFrame {
 		return contentPanel;
 	}
 	
-	public boolean saveChange() {
-		return true;
-	}
-	
 	public void close() {
 		this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
 	}
@@ -303,7 +310,7 @@ public class AddressBookGUI extends JFrame {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void updateList() {
+	public void updateList() {
 		int lastSelected = selectedIndex;
 		contactList.setListData(controller.getEntryList().toArray());
 		contactList.revalidate();

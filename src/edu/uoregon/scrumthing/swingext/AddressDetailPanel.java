@@ -126,9 +126,9 @@ public class AddressDetailPanel extends JPanel {
 			panel.add(new JLabel(key));
 			panel.add(newTextField);
 			
-			panel.setPreferredSize(new Dimension(150, 40));
+			panel.setPreferredSize(new Dimension(200, 40));
 			panel.setMinimumSize(new Dimension(80, 40));
-			panel.setMaximumSize(new Dimension(200, 40));
+			panel.setMaximumSize(new Dimension(300, 40));
 			
 			fieldPane.add(panel);
 		}

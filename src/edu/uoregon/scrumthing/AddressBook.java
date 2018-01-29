@@ -13,7 +13,8 @@ public class AddressBook extends EntryContainer<Entry> {
 
 	public AddressBook(String name) {
 		// TODO finish constructor  
-		addressBookName = name;	}
+		addressBookName = name;
+	}
 	
 	public AddressBook() {
 		// TODO Auto-generated constructor stub

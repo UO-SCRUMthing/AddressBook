@@ -2,6 +2,7 @@ package edu.uoregon.scrumthing;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,15 +13,22 @@ import java.util.AbstractMap.SimpleEntry;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
+
+import edu.uoregon.scrumthing.ControllerPool.ControllerNode;
 import edu.uoregon.scrumthing.swingext.AddressBookGUI;
 
 public class Application extends Controller {
 	EntryContainer<Entry> addressBook; // List<EntryContainer<Entry>> if multiple books supported
 //	int ACTIVE_BOOK;
-	JFrame GUI;
+	AddressBookGUI GUI;
 	String filePath;
 	private static List<String> parsingFields = Arrays.asList("city", "state", "zip", "address1", "address2", "lastName", "firstName", "phoneNumber", "email");
 	private boolean modified = false;
+	
+	ControllerNode node;
+	
+	// Application Pool
+	public static ControllerPool appPool;
 	
 	public static void main(String[] args) {
 	    try {
@@ -28,31 +36,39 @@ public class Application extends Controller {
 	    }catch(Exception ex) {
 	        ex.printStackTrace();
 	    }
+	    
+	    // TODO: check recent file / empty name
+	    appPool = new ControllerPool();
 	    Application app = new Application();
-	    app.openAddressBook("src/ABTestSimple.tsv");	
-	    app.saveAsAddressBook("src/ABTestSimpleTEST.tsv");
-	    app.openAddressBook("src/ABTestSimpleTEST.tsv");	
-	    app.saveAsAddressBook("src/ABTestSimpleTEST2.tsv");
+	    
+	    // Add the initial application to the pool
+	    appPool.add(app);
 
 	}
 	
 	public Application() {
-		createNewAddressBook("New Address Book");
-		AddressBookGUI gui = new AddressBookGUI(this);
+		this("New Address Book");
 	}
 	
-	@Override
-	public void createNewAddressBook(String name) {
+	public Application(String name) {
 		addressBook = new AddressBook(name);
+		GUI = new AddressBookGUI(this);
 	}
 	
 	@Override
-	public void createNewAddressBook() {
-		addressBook = new AddressBook();
+	public Controller createNewAddressBook(String name) {
+		Controller newApp = new Application(name);
+		appPool.add(newApp);
+		return newApp;
+	}
+	
+	@Override
+	public Controller createNewAddressBook() {
+		return createNewAddressBook("New Address Book");
 	}
 	
 	private Entry createEntryFromLine(String line) {
-		String[] parts = line.split("\\t", 9);		
+		String[] parts = line.split("\\t", 9);
 			
 		Contact temp = null;
 		try {
@@ -66,16 +82,19 @@ public class Application extends Controller {
 
 	@Override
 	public int openAddressBook(String fileName) {
+		System.out.println(fileName);
 		// creates new AddressBook to dump data into
+		int successes = -1;
 		if (!modified) {
 			addressBook = new AddressBook();
-			return this.importAddressBook(fileName);
+			successes = this.importAddressBook(fileName);
 		} else {
 			// warn user this will wipe all their unsaved data
 			addressBook = new AddressBook();
-			return this.importAddressBook(fileName);
+			successes = this.importAddressBook(fileName);
 		}
-
+		GUI.updateList();
+		return successes;
 	}
 	
 	@Override
@@ -157,8 +176,10 @@ public class Application extends Controller {
 
 	@Override
 	public boolean closeAddressBook() {
-		// TODO Auto-generated method stub
-		return false;
+		// TODO: warn use;
+		GUI.dispose();
+		node.removeSelf();
+		return true;
 	}
 
 	@Override
@@ -203,5 +224,15 @@ public class Application extends Controller {
 	@Override
 	public String getAddressBookName() {
 		return addressBook.getAddressBookName();
+	}
+
+	@Override
+	public void registerNode(ControllerNode node) {
+		this.node = node;
+	}
+
+	@Override
+	public void closeAllAddressBook() {
+		appPool.closeAll();
 	}
 }

@@ -63,7 +63,7 @@ public class Contact extends Entry implements Comparable<Entry> {
     
     @Override
     public String getZip() {
-    	return detailList.get(5).getValue();
+    	return detailList.get(6).getValue();
     }
 
 	@Override

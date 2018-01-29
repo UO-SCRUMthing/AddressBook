@@ -64,6 +64,12 @@ public class TestContainer extends EntryContainer<TestEntry>{
 			return null;
 		}
 
+		@Override
+		public CharSequence toTabString() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
 	}
 	
 	private ArrayList<TestEntry> testList;
@@ -124,6 +130,36 @@ public class TestContainer extends EntryContainer<TestEntry>{
 
 	@Override
 	public void addEntry(Entry entry) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getAddressBookName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setAddressBookName(String addressBookName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public List<Entry> search(String lastName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Entry> search(String firstName, String lastName) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void deleteEntry(Entry entry) {
 		// TODO Auto-generated method stub
 		
 	}
