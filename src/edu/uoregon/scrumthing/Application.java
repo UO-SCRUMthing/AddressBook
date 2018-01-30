@@ -2,7 +2,6 @@ package edu.uoregon.scrumthing;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -12,19 +11,18 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 
-import javax.swing.JFrame;
 import javax.swing.UIManager;
 
 import edu.uoregon.scrumthing.ControllerPool.ControllerNode;
 import edu.uoregon.scrumthing.swingext.AddressBookGUI;
 
 public class Application extends Controller {
-	EntryContainer<Entry> addressBook; // List<EntryContainer<Entry>> if multiple books supported
-//	int ACTIVE_BOOK;
+	EntryContainer<Entry> addressBook; 
 	AddressBookGUI GUI;
 	String filePath;
 	private static List<String> parsingFields = Arrays.asList("city", "state", "zip", "address1", "address2", "lastName", "firstName", "phoneNumber", "email");
 	private boolean modified = false;
+	private String tempFilePath =  System.getProperty("user.home") + File.separator + "scrumthingAddressBookTempFile.tmp";
 	
 	ControllerNode node;
 	
@@ -41,6 +39,14 @@ public class Application extends Controller {
 	    // TODO: check recent file / empty name
 	    appPool = new ControllerPool();
 	    Application app = new Application();
+	    if (!app.openLastAddressBook()) {
+	    	// prompt user to select an address book to open
+	    	System.out.println("No temp file, user must select address book to open.");
+	    }
+//	    app.openAddressBook("src/ABTestSimple.tsv");	
+//	    app.saveAsAddressBook("src/ABTestSimpleTEST.tsv");
+//	    app.openAddressBook("src/ABTestSimpleTEST.tsv");	
+//	    app.saveAsAddressBook("src/ABTestSimpleTEST2.tsv");
 	    
 	    // Add the initial application to the pool
 	    appPool.add(app);
@@ -68,17 +74,30 @@ public class Application extends Controller {
 		return createNewAddressBook("New Address Book");
 	}
 	
-	private Entry createEntryFromLine(String line) {
-		String[] parts = line.split("\\t", 9);
-			
-		Contact temp = null;
+	private boolean openLastAddressBook() {
 		try {
-			temp = new Contact(parts[6], parts[5], parts[3], parts[4], parts[0], parts[1], parts[2], parts[7], parts[8]);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			temp = new Contact(parts[6], parts[5], parts[3], parts[4], parts[0], parts[1], parts[2], parts[7]);
-//			e.printStackTrace();
+			BufferedReader reader = new BufferedReader(new FileReader(tempFilePath));
+		    String str = reader.readLine();
+		    if (str != null) {
+		    	importAddressBook(str);	
+		    }
+		    reader.close();
+		} catch (IOException e) {
+			return false;
 		}
-		return temp; 
+		return true;
+
+	}
+	
+	private void saveLastAddressBook(File file) {
+		try {
+			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFilePath));
+			writer.append(file.getAbsolutePath());	
+			writer.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -94,9 +113,40 @@ public class Application extends Controller {
 			addressBook = new AddressBook();
 			successes = this.importAddressBook(fileName);
 		}
-		GUI.updateList();
-		if (successes >= 0) GUI.notice("Opened file: " + file.getName(), 0);
+		if (successes >= 0) {
+			GUI.notice("Opened file: " + file.getName(), 0);
+		}
+		
+		saveLastAddressBook(file);
 		return successes;
+	}
+	
+	private Entry createEntryFromLine(String line) {
+		String[] parts = line.split("\\t", parsingFields.size());
+			
+		Contact newContact = null;
+		int emptyFields = 0;
+		if (parts.length < 8 || (parts[6].isEmpty() && parts[5].isEmpty())) { // line either has too few fields or both name fields are empty
+//			System.err.println("too few fields or name fields empty");
+			return null;
+		} else if (parts[6].isEmpty() || parts[5].isEmpty()) { // if one name field is empty 
+			for (String field : parts) {
+				if (field.isEmpty()) {
+					emptyFields++;
+				}
+			}
+			if (emptyFields > parts.length - 2) { // must have at least 2 fields non empty
+//				System.err.println("too many empty fields");
+				return null;
+			}
+		}
+		if (parts.length < 9) {
+			newContact = new Contact(parts[6], parts[5], parts[3], parts[4], parts[0], parts[1], parts[2], parts[7]);
+		} else {
+			newContact = new Contact(parts[6], parts[5], parts[3], parts[4], parts[0], parts[1], parts[2], parts[7], parts[8]);
+		}
+		
+		return newContact; 
 	}
 	
 	@Override
@@ -114,29 +164,32 @@ public class Application extends Controller {
 	        		addressBook.addEntry(e);
 	        		successes++;
 	        	} else {
-	        		System.out.println("line parse failure");
+	        		System.err.println("line parse failure");
 	        	}
 	        } 
 	        modified = true;
 	        filePath = fileName;
-		} catch (Exception e) {
-			e.printStackTrace();
+		} catch (IOException e) {
+//			e.printStackTrace();
+			System.err.println("File '" + fileName + "' not found");
 			successes = -1;
 		} finally {
 			try {
-				reader.close();
+				if (reader != null) {
+					reader.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		addressBook.sort();
+		GUI.updateList();
 		return successes;
 	}
 
 	@Override
 	public boolean saveAddressBook() {
 		// TODO: fix save feature + notice
-		File file = new File(filePath);
 		boolean saved = this.saveAsAddressBook(filePath);
 		if (saved) {
 			modified = false;
@@ -162,7 +215,7 @@ public class Application extends Controller {
 			}
 			writer.append(header + body);
 			success = true;
-		} catch (Exception e) {
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			GUI.notice("Failed to save file: " + e.getMessage(), 2);
@@ -177,13 +230,14 @@ public class Application extends Controller {
 		if (success) {
 			modified = false;
 			GUI.notice("Saved file: " + file.getName(), 0);
+			saveLastAddressBook(file);
 		}
 		return success;
 	}
 
 	@Override
 	public boolean closeAddressBook() {
-		// TODO: warn use;
+		// TODO: warn user;
 		GUI.dispose();
 		node.removeSelf();
 		return true;
@@ -199,7 +253,7 @@ public class Application extends Controller {
 		modified = true;
 		addressBook.addEntry(newEntry);
 		GUI.notice("New contact added", 0);
-		//addressBook.sort();
+		addressBook.sort();
 	}
 
 	@Override
@@ -225,6 +279,11 @@ public class Application extends Controller {
 	@Override
 	public List<Entry> getEntryList() {
 		return addressBook.getAll();
+	}
+	
+	@Override 
+	public List<Entry> getEntryList(String searchTerm) {
+		return addressBook.getAll(searchTerm);
 	}
 
 	@Override

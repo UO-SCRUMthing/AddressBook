@@ -81,6 +81,6 @@ public abstract class Entry implements Comparable<Entry>{
 		return this.getLastName().compareToIgnoreCase(other.getLastName());
 	}
 
-	public abstract CharSequence toTabString();
+	public abstract String toTabString();
 	
 }

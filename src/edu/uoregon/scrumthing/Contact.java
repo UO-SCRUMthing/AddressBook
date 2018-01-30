@@ -14,27 +14,27 @@ public class Contact extends Entry implements Comparable<Entry> {
     private ArrayList<String> allFieldNames = new ArrayList<String>(defaultFields);
     
     public Contact(String _firstName, String _lastName, String _address1, String _address2, String _city, String _state, String _zip, String _phoneNumber, String _email) {
-        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
-        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
-        detailList.add(new SimpleEntry<String, String>("address1", _address1));
-        detailList.add(new SimpleEntry<String, String>("address2", _address2));
-        detailList.add(new SimpleEntry<String, String>("city", _city));
-        detailList.add(new SimpleEntry<String, String>("state", _state));
-        detailList.add(new SimpleEntry<String, String>("zip", _zip));
-        detailList.add(new SimpleEntry<String, String>("email", _email));
-        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
+        detailList.add(new SimpleEntry<String, String>("firstName", _firstName.trim()));
+        detailList.add(new SimpleEntry<String, String>("lastName", _lastName.trim()));
+        detailList.add(new SimpleEntry<String, String>("address1", _address1.trim()));
+        detailList.add(new SimpleEntry<String, String>("address2", _address2.trim()));
+        detailList.add(new SimpleEntry<String, String>("city", _city.trim()));
+        detailList.add(new SimpleEntry<String, String>("state", _state.trim()));
+        detailList.add(new SimpleEntry<String, String>("zip", _zip.trim()));
+        detailList.add(new SimpleEntry<String, String>("email", _email.trim()));
+        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber.trim()));
     }
     
     public Contact(String _firstName, String _lastName, String _address1, String _address2, String _city, String _state, String _zip, String _phoneNumber) {
-        detailList.add(new SimpleEntry<String, String>("firstName", _firstName));
-        detailList.add(new SimpleEntry<String, String>("lastName", _lastName));
-        detailList.add(new SimpleEntry<String, String>("address1", _address1));
-        detailList.add(new SimpleEntry<String, String>("address2", _address2));
-        detailList.add(new SimpleEntry<String, String>("city", _city));
-        detailList.add(new SimpleEntry<String, String>("state", _state));
-        detailList.add(new SimpleEntry<String, String>("zip", _zip));
+        detailList.add(new SimpleEntry<String, String>("firstName", _firstName.trim()));
+        detailList.add(new SimpleEntry<String, String>("lastName", _lastName.trim()));
+        detailList.add(new SimpleEntry<String, String>("address1", _address1.trim()));
+        detailList.add(new SimpleEntry<String, String>("address2", _address2.trim()));
+        detailList.add(new SimpleEntry<String, String>("city", _city.trim()));
+        detailList.add(new SimpleEntry<String, String>("state", _state.trim()));
+        detailList.add(new SimpleEntry<String, String>("zip", _zip.trim()));
         detailList.add(new SimpleEntry<String, String>("email", ""));
-        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber));
+        detailList.add(new SimpleEntry<String, String>("phoneNumber", _phoneNumber.trim()));
     }
     
     public Contact() {
@@ -45,7 +45,7 @@ public class Contact extends Entry implements Comparable<Entry> {
     
     @Override
 	public String toTabString() {
-		return detailList.get(4).getValue() + "\t" + detailList.get(5).getValue() + "\t" + detailList.get(6).getValue() + "\t" + 
+		return  detailList.get(4).getValue() + "\t" + detailList.get(5).getValue() + "\t" + detailList.get(6).getValue() + "\t" + 
 				detailList.get(2).getValue() + "\t" + detailList.get(3).getValue() + "\t" + detailList.get(1).getValue() + "\t" + 
 				detailList.get(0).getValue() + "\t" + detailList.get(8).getValue() + "\t" + detailList.get(7).getValue();
 	}
@@ -82,7 +82,7 @@ public class Contact extends Entry implements Comparable<Entry> {
 		for (SimpleEntry<String, String> entry : detailList) {
 			String key = entry.getKey();
 			if (detailMap.containsKey(key)) {
-				entry.setValue(detailMap.get(key));
+				entry.setValue(detailMap.get(key).trim());
 				changed = true;
 			}
 		}

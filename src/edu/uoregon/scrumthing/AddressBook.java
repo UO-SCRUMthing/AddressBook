@@ -3,10 +3,8 @@ package edu.uoregon.scrumthing;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 
 public class AddressBook extends EntryContainer<Entry> {
-	private HashMap<String, ArrayList<Entry>> searchableContacts = new HashMap<String, ArrayList<Entry>>();
 	private List<Entry> sortedContactList = new ArrayList<Entry>();
 	private String sortedOn = "name";
 	private String addressBookName;
@@ -18,21 +16,6 @@ public class AddressBook extends EntryContainer<Entry> {
 	
 	public AddressBook() {
 		// TODO Auto-generated constructor stub
-	}
-	
-	@Override
-	public List<Entry> search(String lastName) {
-		List<Entry> searchResults = new ArrayList<Entry>();
-		
-		return searchResults;
-		
-	}
-	
-	@Override
-	public List<Entry> search(String firstName, String lastName) {
-		List<Entry> searchResults = new ArrayList<Entry>();
-		return searchResults;
-		
 	}
 
 	@Override
@@ -73,6 +56,25 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public List<Entry> getAll() {
 		return sortedContactList;
+	}
+	
+	@Override
+	public List<Entry> getAll(String searchTerm) {
+		String[] parts = searchTerm.toLowerCase().split(" ");
+		List<Entry> searchResults = new ArrayList<Entry>();
+		for (Entry entry : sortedContactList) {
+			boolean contains = true;
+			for (String part : parts) {
+				if (!entry.toTabString().toLowerCase().contains(part)) {
+					contains = false;
+					break;
+				}
+			}
+			if (contains) {
+				searchResults.add(entry);
+			}
+		}
+		return searchResults;
 	}
 
 	@Override

@@ -53,9 +53,7 @@ public abstract class EntryContainer<T extends Entry> {
 
 	public abstract void setAddressBookName(String addressBookName);
 
-	public abstract List<Entry> search(String lastName);
-
-	public abstract List<Entry> search(String firstName, String lastName);
-
 	public abstract void deleteEntry(Entry entry);
+
+	public abstract List<Entry> getAll(String searchTerm);
 }

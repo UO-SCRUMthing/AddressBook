@@ -69,4 +69,6 @@ public abstract class Controller {
 	// use to remove itself from the application pool
 	public abstract void registerNode(ControllerNode node);
 	public abstract void closeAllAddressBook();
+
+	public abstract List<Entry> getEntryList(String searchTerm);
 }
