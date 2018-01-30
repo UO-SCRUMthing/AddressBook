@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 
-import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,7 +32,6 @@ public class NamePlatePanel extends JPanel {
 		
 		namePlate.setAlignmentX(Component.LEFT_ALIGNMENT);
 		namePlate.setFont(new Font(namePlate.getFont().getName(), Font.PLAIN, 24));
-		add(Box.createHorizontalStrut(15));
 		add(namePlate);
 		updateNamePlate();
 	}
@@ -68,12 +66,10 @@ public class NamePlatePanel extends JPanel {
 		if (editMode != edit) {
 			if (edit) {
 				this.removeAll();
-				add(Box.createHorizontalStrut(15));
 				add(firstField);
 				add(lastField);
 			} else if (!edit) {
 				this.removeAll();
-				add(Box.createHorizontalStrut(15));
 				add(namePlate);
 				updateNamePlate();
 			}

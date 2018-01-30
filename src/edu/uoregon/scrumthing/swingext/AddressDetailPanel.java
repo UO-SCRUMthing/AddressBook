@@ -1,17 +1,20 @@
 package edu.uoregon.scrumthing.swingext;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.Box;
+import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
@@ -57,6 +60,7 @@ public class AddressDetailPanel extends JPanel {
 	
 	public AddressDetailPanel(AddressBookGUI gui) {
 		super(new BorderLayout());
+		this.setBorder(BorderFactory.createEmptyBorder(15, 10, 15, 10));
 		this.gui = gui;
 		this.emptyEntry = null;
 		namePlate = new NamePlatePanel();
@@ -84,6 +88,7 @@ public class AddressDetailPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				discardChange();
+				gui.notice("Change discarded", 0);
 			}
 		});
 		
@@ -100,8 +105,6 @@ public class AddressDetailPanel extends JPanel {
 		fieldPane.setLayout(new BoxLayout(fieldPane, BoxLayout.Y_AXIS));
 		
 		JPanel firstBar = new JPanel(new BorderLayout());
-		firstBar.add(Box.createVerticalStrut(15), BorderLayout.PAGE_START);
-		firstBar.add(Box.createVerticalStrut(20), BorderLayout.PAGE_END);
 		firstBar.add(namePlate, BorderLayout.LINE_START);
 		firstBar.add(createEditButtonSet(), BorderLayout.LINE_END);
 		
@@ -118,6 +121,19 @@ public class AddressDetailPanel extends JPanel {
 		else {
 			JTextField newTextField = new JTextField(value);
 			newTextField.setEnabled(false);
+			newTextField.addFocusListener(new FocusListener() {
+				@Override
+				public void focusGained(FocusEvent e) {
+					// To remove any notice
+					gui.notice("", 0);
+					newTextField.setBackground(Color.WHITE);
+				}
+
+				@Override
+				public void focusLost(FocusEvent e) {
+					// Do nothing
+				}
+			});
 			fields.put(key, newTextField);
 			
 			JPanel panel = new JPanel();
@@ -139,7 +155,6 @@ public class AddressDetailPanel extends JPanel {
 		JPanel margin = new JPanel(new FlowLayout());
 		editButtonSet = new JPanel(new FlowLayout());;
 		margin.add(editButtonSet);
-		margin.add(Box.createHorizontalStrut(15));
 		
 		editButtonSet.add(editButton);
 		return margin;
@@ -165,11 +180,14 @@ public class AddressDetailPanel extends JPanel {
 	}
 	
 	private void saveChange() {
+		HashMap<String, String> fields = getAllFields();
+		
 		if (index == NEW && emptyEntry != null) {
-			emptyEntry.updateDetails(getAllFields());
+			emptyEntry.updateDetails(fields);
 			gui.controller.addNewEntry(emptyEntry);
+			gui.setNoSorting();
 		} else if (index >= 0){
-			gui.controller.updateEntry(index, getAllFields());
+			gui.controller.updateEntry(index, fields);
 		}
 		exitEditMode(true);
 	}

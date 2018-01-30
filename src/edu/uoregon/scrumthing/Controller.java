@@ -10,6 +10,12 @@ import javax.swing.JFrame;
 import edu.uoregon.scrumthing.ControllerPool.ControllerNode;
 
 public abstract class Controller {
+	/*
+	public static boolean FieldCheck(String field, String data) {
+		
+		
+	}
+	*/
 	
 	public abstract String getAddressBookName();
 	

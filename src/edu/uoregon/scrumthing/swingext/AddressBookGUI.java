@@ -1,6 +1,7 @@
 package edu.uoregon.scrumthing.swingext;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -9,9 +10,9 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
-import java.io.File;
 import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -25,6 +26,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -39,10 +41,16 @@ public class AddressBookGUI extends JFrame {
 	
 	protected Controller controller;
 	private AddressDetailPanel detailPane;
+	@SuppressWarnings("rawtypes")
 	private JList contactList;
 	private JScrollPane splitRight;
 	private int selectedIndex;
 	private boolean editing;
+	
+	private JPanel status;
+	private JLabel statusText;
+	
+	private JComboBox<String> sortCombo;
 	
 	private ArrayList<JComponent> disableComponents;
 	
@@ -101,8 +109,14 @@ public class AddressBookGUI extends JFrame {
 					fileDiag.setFileFilter(filter);
 				    int returnVal = fileDiag.showOpenDialog(AddressBookGUI.this);
 				    if(returnVal == JFileChooser.APPROVE_OPTION) {
+				    		// Open file and notice any failure
 				    		Controller newApp = controller.createNewAddressBook();
-				    		newApp.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath());
+				    		if (newApp.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath()) <= 0) {
+				    			notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
+				    			newApp.closeAddressBook();
+				    		} else {
+				    			notice("New window opened.", 0);
+				    		}
 				    }
 				}
 			});
@@ -169,11 +183,11 @@ public class AddressBookGUI extends JFrame {
 	
 	private JPanel createToolbar() {
 		JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
-		JComboBox<String> combo = new JComboBox<String>();
-		combo.setPreferredSize(new Dimension(100,20));
-		combo.addItem("name");
-		combo.addItem("zip");
-		combo.addItemListener(new ItemListener() {
+		sortCombo = new JComboBox<String>();
+		sortCombo.setPreferredSize(new Dimension(100,20));
+		sortCombo.addItem("name");
+		sortCombo.addItem("zip");
+		sortCombo.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 		        int state = e.getStateChange();
@@ -184,12 +198,14 @@ public class AddressBookGUI extends JFrame {
 		        }
 			}
 		});
-		toolbar.add(combo);
+		toolbar.add(sortCombo);
 		// Disable sort while editing
-		disableComponents.add(combo);
+		disableComponents.add(sortCombo);
 		
 		JButton newEntryButton = new JButton("+");
+		newEntryButton.setToolTipText("Create new contact");
 		JButton removeEntryButton = new JButton("x");
+		removeEntryButton.setToolTipText("Remove selected contact");
 		
 		newEntryButton.addActionListener(new ActionListener() {
 			@Override
@@ -212,7 +228,10 @@ public class AddressBookGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				int deletingIndex = selectedIndex;
 				// TODO: notify user nothing changed
-				if (deletingIndex < 0) return;
+				if (deletingIndex < 0) {
+					notice("Please select a contact to delete", 1);
+					return;
+				}
 				contactList.clearSelection();
 				selectedIndex = -1;
 				controller.deleteEntry(deletingIndex);
@@ -231,6 +250,7 @@ public class AddressBookGUI extends JFrame {
 		JPanel contentPanel = new JPanel(new BorderLayout());
 		
 		contactList = new JList<>();
+		contactList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		updateList();
 		JScrollPane splitLeft = new JScrollPane(contactList);
 		splitLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -272,7 +292,13 @@ public class AddressBookGUI extends JFrame {
 		
 		contentPanel.add(splitPane, BorderLayout.CENTER);
 		
-		contentPanel.add(new JLabel("Opened"), BorderLayout.PAGE_END);
+		status = new JPanel(new BorderLayout());
+		status.setPreferredSize(new Dimension(0, 25));
+		status.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+		statusText = new JLabel("Opened");
+		status.add(statusText, BorderLayout.LINE_START);
+		notice("Opened", 0);
+		contentPanel.add(status, BorderLayout.PAGE_END);
 		
 		return contentPanel;
 	}
@@ -287,6 +313,7 @@ public class AddressBookGUI extends JFrame {
 		}
 		contactList.setEnabled(false);
 		editing = true;
+		notice(" ", 0);
 	}
 	
 	protected void exitEditMode(boolean selectNew) {
@@ -318,4 +345,28 @@ public class AddressBookGUI extends JFrame {
 		contactList.setSelectedIndex(lastSelected);
 	}
 	
+	public void notice(String text, int warning_level) {
+		statusText.setText(text);
+		switch (warning_level) {
+		case 0:
+			status.setBackground(Color.WHITE);
+			break;
+		case 1:
+			status.setBackground(Color.YELLOW);
+			break;
+		case 2:
+			status.setBackground(new Color(255,80,80));
+			break;
+		default:
+			status.setBackground(Color.WHITE);
+			break;
+		}
+		status.revalidate();
+		status.repaint();
+		
+	}
+	
+	public void setNoSorting() {
+		sortCombo.setSelectedIndex(-1);
+	}
 }

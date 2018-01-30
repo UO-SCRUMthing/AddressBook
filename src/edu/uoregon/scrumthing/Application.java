@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class Application extends Controller {
 
 	@Override
 	public int openAddressBook(String fileName) {
-		System.out.println(fileName);
+		File file = new File(fileName);
 		// creates new AddressBook to dump data into
 		int successes = -1;
 		if (!modified) {
@@ -94,6 +95,7 @@ public class Application extends Controller {
 			successes = this.importAddressBook(fileName);
 		}
 		GUI.updateList();
+		if (successes >= 0) GUI.notice("Opened file: " + file.getName(), 0);
 		return successes;
 	}
 	
@@ -117,7 +119,7 @@ public class Application extends Controller {
 	        } 
 	        modified = true;
 	        filePath = fileName;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			successes = -1;
 		} finally {
@@ -133,6 +135,8 @@ public class Application extends Controller {
 
 	@Override
 	public boolean saveAddressBook() {
+		// TODO: fix save feature + notice
+		File file = new File(filePath);
 		boolean saved = this.saveAsAddressBook(filePath);
 		if (saved) {
 			modified = false;
@@ -142,12 +146,13 @@ public class Application extends Controller {
 
 	@Override
 	public boolean saveAsAddressBook(String filePath) {
+		File file = new File(filePath);
 		BufferedWriter writer = null;
 		String header = "";
 		String body = "";
 		boolean success = false;
 		try {
-			writer = new BufferedWriter(new FileWriter(filePath));
+			writer = new BufferedWriter(new FileWriter(file));
 			for (String fieldName : parsingFields) {
 				header += fieldName.toUpperCase() + "\t";
 			}
@@ -157,9 +162,10 @@ public class Application extends Controller {
 			}
 			writer.append(header + body);
 			success = true;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			GUI.notice("Failed to save file: " + e.getMessage(), 2);
 		} finally {
 			try {
 				writer.close();
@@ -170,6 +176,7 @@ public class Application extends Controller {
 		}
 		if (success) {
 			modified = false;
+			GUI.notice("Saved file: " + file.getName(), 0);
 		}
 		return success;
 	}
@@ -191,19 +198,23 @@ public class Application extends Controller {
 	public void addNewEntry(Entry newEntry) {
 		modified = true;
 		addressBook.addEntry(newEntry);
-		addressBook.sort();
+		GUI.notice("New contact added", 0);
+		//addressBook.sort();
 	}
 
 	@Override
 	public void updateEntry(int index, HashMap<String, String> details) {
 		modified = true;
 		addressBook.getEntry(index).updateDetails(details);
+		GUI.notice("Contact updated", 0);
 	}
 
 	@Override
 	public void deleteEntry(int index) {
 		modified = true;
 		addressBook.deleteEntry(index);
+		// TODO: Undo
+		GUI.notice("Selected contact deleted", 0);
 	}
 
 	@Override
@@ -219,6 +230,7 @@ public class Application extends Controller {
 	@Override
 	public void sortBy(String field) {
 		addressBook.sortBy(field);
+		GUI.notice("Sorted by " + field, 0);
 	}
 
 	@Override
