@@ -11,12 +11,12 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -33,7 +33,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.uoregon.scrumthing.Controller;
 import edu.uoregon.scrumthing.Entry;
@@ -247,6 +246,8 @@ public class AddressBookGUI extends JFrame {
 		// Disable sort while editing
 		disableComponents.add(sortCombo);
 		
+		
+		// TODO: change button placement
 		JButton newEntryButton = new JButton("+");
 		newEntryButton.setToolTipText("Create new contact");
 		JButton removeEntryButton = new JButton("x");
