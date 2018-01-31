@@ -6,16 +6,16 @@ import java.util.Collections;
 
 public class AddressBook extends EntryContainer<Entry> {
 	private List<Entry> sortedContactList = new ArrayList<Entry>();
+	private List<Entry> searchResults;
 	private String sortedOn = "name";
 	private String addressBookName;
 
 	public AddressBook(String name) {
-		// TODO finish constructor  
 		addressBookName = name;
 	}
 	
 	public AddressBook() {
-		// TODO Auto-generated constructor stub
+		addressBookName = "Unnamed Address Book";
 	}
 
 	@Override
@@ -31,11 +31,15 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public boolean sortBy(String field) {
 		if (field == "name") {
+			if (searchResults != null)
+				Collections.sort(searchResults, Entry.compareName);
 			Collections.sort(sortedContactList, Entry.compareName);
 			sortedOn = field;
 			return true;
 			
 		} else if (field == "zip") {
+			if (searchResults != null)
+				Collections.sort(searchResults, Entry.compareName);
 			Collections.sort(sortedContactList, Entry.compareZip); 
 			sortedOn = field;	
 			return true;
@@ -45,6 +49,9 @@ public class AddressBook extends EntryContainer<Entry> {
 	
 	@Override
 	public Entry getEntry(int index) {
+		if (searchResults != null) {
+			return searchResults.get(index);
+		}
 		return sortedContactList.get(index);
 	}
 	
@@ -55,6 +62,7 @@ public class AddressBook extends EntryContainer<Entry> {
 
 	@Override
 	public List<Entry> getAll() {
+		searchResults = null;
 		return sortedContactList;
 	}
 	
@@ -74,6 +82,7 @@ public class AddressBook extends EntryContainer<Entry> {
 				searchResults.add(entry);
 			}
 		}
+		this.searchResults = searchResults;
 		return searchResults;
 	}
 
@@ -84,7 +93,7 @@ public class AddressBook extends EntryContainer<Entry> {
 
 	@Override
 	public void deleteEntry(int index) {
-		sortedContactList.remove(index);
+		deleteEntry(getEntry(index));
 	}
 	
 	@Override
@@ -103,7 +112,7 @@ public class AddressBook extends EntryContainer<Entry> {
 
 	@Override
 	public boolean sort() {
-		return this.sortBy(sortedOn);		
+		return this.sortBy(sortedOn);
 	}
 
 	@Override

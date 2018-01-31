@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -258,5 +259,21 @@ public class AddressDetailPanel extends JPanel {
 			}
 		}
 		namePlate.setPlateName(firstName, lastName);
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<String> highlightWarningFields() {
+		ArrayList<String> warningFields = new ArrayList<String>();
+	    Iterator it = fields.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        JTextField field = (JTextField)pair.getValue();
+			if (!Entry.FieldCheck((String)pair.getKey(), field.getText())) {
+				warningFields.add((String)pair.getKey());
+				field.setBackground(Color.yellow);
+			}
+	    }
+
+		return warningFields;
 	}
 }

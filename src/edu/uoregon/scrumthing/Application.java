@@ -1,8 +1,5 @@
 package edu.uoregon.scrumthing;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -10,19 +7,30 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import edu.uoregon.scrumthing.ControllerPool.ControllerNode;
 import edu.uoregon.scrumthing.swingext.AddressBookGUI;
 
 public class Application extends Controller {
+	private static final String SaveFileExtension = "sab";
+	private static final String ImportFileExtension = "tsv";
+	
 	EntryContainer<Entry> addressBook; 
 	AddressBookGUI GUI;
-	String filePath;
+	
+	private String filePath;
 	private static List<String> parsingFields = Arrays.asList("city", "state", "zip", "address1", "address2", "lastName", "firstName", "phoneNumber", "email");
 	private boolean modified = false;
-	private String tempFilePath =  System.getProperty("user.home") + File.separator + "scrumthingAddressBookTempFile.tmp";
+	private String tempFilePath = System.getProperty("user.home") + File.separator + "scrumthingAddressBookTempFile.tmp";
 	
 	ControllerNode node;
 	
@@ -38,43 +46,33 @@ public class Application extends Controller {
 	    
 	    // TODO: check recent file / empty name
 	    appPool = new ControllerPool();
-	    Application app = new Application();
-	    if (!app.openLastAddressBook()) {
-	    	// prompt user to select an address book to open
-	    	System.out.println("No temp file, user must select address book to open.");
+	    Application app = new Application(null);
+	    appPool.add(app);
+	    if (!app.loadLastAddressBook()) {
+    			app.closeAddressBook();
+    			app = (Application)app.createWindowForNewAddressBook();
+	    } else {
+	    	app.GUI.setVisible(true);
 	    }
+	    
 //	    app.openAddressBook("src/ABTestSimple.tsv");	
 //	    app.saveAsAddressBook("src/ABTestSimpleTEST.tsv");
 //	    app.openAddressBook("src/ABTestSimpleTEST.tsv");	
 //	    app.saveAsAddressBook("src/ABTestSimpleTEST2.tsv");
-	    
-	    // Add the initial application to the pool
-	    appPool.add(app);
 
 	}
 	
-	public Application() {
-		this("New Address Book");
+	public Application(JFrame relative) {
+		addressBook = new AddressBook();
+		GUI = new AddressBookGUI(relative, this);
 	}
 	
-	public Application(String name) {
+	public Application(JFrame relative, String name) {
 		addressBook = new AddressBook(name);
-		GUI = new AddressBookGUI(this);
+		GUI = new AddressBookGUI(relative, this);
 	}
 	
-	@Override
-	public Controller createNewAddressBook(String name) {
-		Controller newApp = new Application(name);
-		appPool.add(newApp);
-		return newApp;
-	}
-	
-	@Override
-	public Controller createNewAddressBook() {
-		return createNewAddressBook("New Address Book");
-	}
-	
-	private boolean openLastAddressBook() {
+	private boolean loadLastAddressBook() {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(tempFilePath));
 		    String str = reader.readLine();
@@ -99,7 +97,6 @@ public class Application extends Controller {
 		}
 	}
 
-	@Override
 	public int openAddressBook(String fileName) {
 		if (!fileName.endsWith(".tsv")) {
 			return -1;
@@ -190,17 +187,7 @@ public class Application extends Controller {
 	}
 
 	@Override
-	public boolean saveAddressBook() {
-		// TODO: fix save feature + notice
-		boolean saved = this.saveAsAddressBook(filePath);
-		if (saved) {
-			modified = false;
-		}
-		return saved;
-	}
-
-	@Override
-	public boolean saveAsAddressBook(String filePath) {
+	public boolean saveAddressBook(String filePath) {
 		File file = new File(filePath);
 		BufferedWriter writer = null;
 		String header = "";
@@ -231,6 +218,7 @@ public class Application extends Controller {
 		}
 		if (success) {
 			modified = false;
+			this.filePath = filePath;
 			GUI.notice("Saved file: " + file.getName(), 0);
 			saveLastAddressBook(file);
 		}
@@ -239,7 +227,21 @@ public class Application extends Controller {
 
 	@Override
 	public boolean closeAddressBook() {
-		// TODO: warn user;
+		if (modified) {
+			int n = JOptionPane.showConfirmDialog(
+				    GUI,
+				    "Do you want to save the address book?",
+				    this.getAddressBookName(),
+				    JOptionPane.YES_NO_CANCEL_OPTION);
+			
+			switch (n) {
+			case JOptionPane.YES_OPTION:
+				if (!this.saveCurrentAddressBook()) return false;
+				break;
+			case JOptionPane.CANCEL_OPTION:
+				return false;
+			}
+		}
 		GUI.dispose();
 		node.removeSelf();
 		return true;
@@ -307,5 +309,114 @@ public class Application extends Controller {
 	@Override
 	public void closeAllAddressBook() {
 		appPool.closeAll();
+	}
+	
+	@Override
+	public boolean exportAddressBook(String fileName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setAddressBookName(String name) {
+		addressBook.setAddressBookName(name);
+		GUI.setTitle(name);
+	}
+
+	@Override
+	public Controller createWindowForNewAddressBook() {
+		Application newApp = new Application(GUI);
+		appPool.add(newApp);
+		newApp.GUI.setVisible(true);
+		
+		if (!newApp.createRenameDialog()) {
+			newApp.closeAddressBook();
+			newApp = null;
+		}
+		return newApp;
+	}
+
+	@Override
+	public Controller createWindowForExistingAddressBook() {
+		JFileChooser fileDiag = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
+		fileDiag.setFileFilter(filter);
+	    int returnVal = fileDiag.showOpenDialog(GUI);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    		// Open file and notice any failure
+	    		String filename = fileDiag.getSelectedFile().getAbsolutePath();
+	    		
+	    		Application newApp = new Application(GUI);
+
+	    		if (openAddressBook(filename) < 0) {
+	    			GUI.notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
+	    			newApp.GUI.dispose();
+	    			return null;
+	    		} else {
+	    			GUI.notice("New window opened.", 0);
+	       			newApp.GUI.setVisible(true);
+	    			appPool.add(newApp);
+	    			return newApp;
+	    		}
+	    }
+		return null;
+	}
+
+	@Override
+	public boolean createSaveDialog() {
+		JFileChooser fileDiag = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
+		fileDiag.setFileFilter(filter);
+		fileDiag.setSelectedFile(new File(getAddressBookName() + "." + SaveFileExtension));
+	    int returnVal = fileDiag.showSaveDialog(GUI);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    		// Add a extension if there isn't one
+	    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
+	    	   	if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
+	    	   	return saveAddressBook(filename);
+	    }
+		return false;
+	}
+
+	@Override
+	public boolean saveCurrentAddressBook() {
+		if (filePath == null || filePath.length() <= 0) {
+			return createSaveDialog();
+		}
+		else {
+			return saveAddressBook(filePath);
+		}
+	}
+
+	@Override
+	public boolean createRenameDialog() {
+		String newAddressBookName = (String)JOptionPane.showInputDialog(
+                GUI,
+                "Please enter a name",
+                "New Address Book",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                getAddressBookName());
+
+		if ((newAddressBookName != null) && (newAddressBookName.length() > 0)) {
+			setAddressBookName(newAddressBookName);
+			modified = true;
+			return true;
+		}
+		
+		return false;
+	}
+
+	@Override
+	public boolean createImportDialog() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean createExportDialog() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
