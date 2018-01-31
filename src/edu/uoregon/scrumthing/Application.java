@@ -361,10 +361,11 @@ public class Application extends Controller {
 	}
 
 	@Override
-	public boolean createDialogForSaveAddressBook() {
+	public boolean createSaveDialog() {
 		JFileChooser fileDiag = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
 		fileDiag.setFileFilter(filter);
+		fileDiag.setSelectedFile(new File(getAddressBookName() + "." + SaveFileExtension));
 	    int returnVal = fileDiag.showSaveDialog(GUI);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    		// Add a extension if there isn't one
@@ -378,7 +379,7 @@ public class Application extends Controller {
 	@Override
 	public boolean saveCurrentAddressBook() {
 		if (filePath == null || filePath.length() <= 0) {
-			return createDialogForSaveAddressBook();
+			return createSaveDialog();
 		}
 		else {
 			return saveAddressBook(filePath);
@@ -394,7 +395,7 @@ public class Application extends Controller {
                 JOptionPane.PLAIN_MESSAGE,
                 null,
                 null,
-                "Unnamed Address Book");
+                getAddressBookName());
 
 		if ((newAddressBookName != null) && (newAddressBookName.length() > 0)) {
 			setAddressBookName(newAddressBookName);
@@ -402,6 +403,18 @@ public class Application extends Controller {
 			return true;
 		}
 		
+		return false;
+	}
+
+	@Override
+	public boolean createImportDialog() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean createExportDialog() {
+		// TODO Auto-generated method stub
 		return false;
 	}
 }

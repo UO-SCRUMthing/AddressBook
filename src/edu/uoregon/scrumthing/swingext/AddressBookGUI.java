@@ -55,6 +55,22 @@ public class AddressBookGUI extends JFrame {
 	
 	private ArrayList<JComponent> disableComponents;
 	
+	private ActionListener addContactAction = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			splitRight.remove(detailPane);
+			selectedIndex = -1;
+			contactList.clearSelection();
+
+			Entry template = controller.createEmptyEntry();
+			detailPane = new AddressDetailPanel(AddressBookGUI.this, template);
+			splitRight.setViewportView(detailPane);
+			
+			splitRight.revalidate();
+			splitRight.repaint();
+		}
+	};
+	
 	// TODO: need controller
 	public AddressBookGUI(JFrame relative, Controller controller) {
 		super(controller.getAddressBookName());
@@ -87,12 +103,11 @@ public class AddressBookGUI extends JFrame {
 		JMenuBar menuBar = new JMenuBar();
 		
 		JMenu fileMenu = new JMenu("File");
-		
 		{
 			/* FileMenu */ 
 			fileMenu.setMnemonic(KeyEvent.VK_F);
 			
-			JMenuItem itemNew = new JMenuItem("New...");
+			JMenuItem itemNew = new JMenuItem("New");
 			itemNew.setMnemonic(KeyEvent.VK_N);
 			itemNew.addActionListener(new ActionListener() {
 				@Override
@@ -125,7 +140,25 @@ public class AddressBookGUI extends JFrame {
 			itemSaveAs.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					controller.createDialogForSaveAddressBook();
+					controller.createSaveDialog();
+				}
+			});
+			
+			JMenuItem itemImport = new JMenuItem("Import...");
+			itemSaveAs.setMnemonic(KeyEvent.VK_I);
+			itemSaveAs.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					controller.createImportDialog();
+				}
+			});
+			
+			JMenuItem itemExport = new JMenuItem("Export...");
+			itemSaveAs.setMnemonic(KeyEvent.VK_E);
+			itemSaveAs.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					controller.createExportDialog();
 				}
 			});
 			
@@ -153,11 +186,39 @@ public class AddressBookGUI extends JFrame {
 			fileMenu.add(itemSave);
 			fileMenu.add(itemSaveAs);
 			fileMenu.addSeparator();
+			fileMenu.add(itemImport);
+			fileMenu.add(itemExport);
+			fileMenu.addSeparator();
 			fileMenu.add(itemClose);
 			fileMenu.add(itemQuit);
 		}
 
+		JMenu editMenu = new JMenu("Edit");
+		{
+			/* EditMenu */ 
+			editMenu.setMnemonic(KeyEvent.VK_E);
+			
+			JMenuItem itemAddContact = new JMenuItem("Add a contact");
+			itemAddContact.setMnemonic(KeyEvent.VK_A);
+			itemAddContact.addActionListener(addContactAction);
+			
+			JMenuItem itemRenameAddressBook = new JMenuItem("Rename address book");
+			itemRenameAddressBook.setMnemonic(KeyEvent.VK_R);
+			itemRenameAddressBook.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					controller.createRenameDialog();
+				}
+			});
+			
+			editMenu.add(itemAddContact);
+			editMenu.addSeparator();
+			editMenu.add(itemRenameAddressBook);
+			
+		}
+		
 		menuBar.add(fileMenu);
+		menuBar.add(editMenu);
 		return menuBar;
 	}
 	
@@ -190,21 +251,7 @@ public class AddressBookGUI extends JFrame {
 		JButton removeEntryButton = new JButton("x");
 		removeEntryButton.setToolTipText("Remove selected contact");
 		
-		newEntryButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				splitRight.remove(detailPane);
-				selectedIndex = -1;
-				contactList.clearSelection();
-
-				Entry template = controller.createEmptyEntry();
-				detailPane = new AddressDetailPanel(AddressBookGUI.this, template);
-				splitRight.setViewportView(detailPane);
-				
-				splitRight.revalidate();
-				splitRight.repaint();
-			}			
-		});
+		newEntryButton.addActionListener(addContactAction);
 		
 		removeEntryButton.addActionListener(new ActionListener() {
 			@Override

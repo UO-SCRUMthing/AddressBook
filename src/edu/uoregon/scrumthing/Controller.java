@@ -53,7 +53,11 @@ public abstract class Controller {
 	public abstract Controller createWindowForExistingAddressBook();
 	// opens a existing addressbook stored in a file. return null if failed.
 
-	public abstract boolean createDialogForSaveAddressBook();
+	public abstract boolean createSaveDialog();
+	
+	public abstract boolean createImportDialog();
+	
+	public abstract boolean createExportDialog();
 		//checks for recorded filename: if found, save to filename; if not request filename from GUI
 	
 	public abstract boolean createRenameDialog();
