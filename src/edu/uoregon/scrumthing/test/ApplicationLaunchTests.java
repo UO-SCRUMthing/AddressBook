@@ -11,7 +11,7 @@ class ApplicationLaunchTests {
 	AddressBookGUI gui;
 	@BeforeEach
 	void setUp() throws Exception {
-		gui = new AddressBookGUI(null);
+		gui = new AddressBookGUI(null, null);
 	}
 
 	@Test

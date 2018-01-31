@@ -10,12 +10,11 @@ public class AddressBook extends EntryContainer<Entry> {
 	private String addressBookName;
 
 	public AddressBook(String name) {
-		// TODO finish constructor  
 		addressBookName = name;
 	}
 	
 	public AddressBook() {
-		// TODO Auto-generated constructor stub
+		addressBookName = "Unnamed Address Book";
 	}
 
 	@Override

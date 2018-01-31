@@ -1,11 +1,8 @@
 package edu.uoregon.scrumthing;
 
+import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
 import java.util.List;
-import java.io.IOException;
-import java.util.AbstractMap.SimpleEntry;
-
-import javax.swing.JFrame;
 
 import edu.uoregon.scrumthing.ControllerPool.ControllerNode;
 
@@ -18,30 +15,7 @@ public abstract class Controller {
 	*/
 	
 	public abstract String getAddressBookName();
-	
-	// file operations
-	public abstract Controller createNewAddressBook(String name);
-    	//creates and sets new address book to addressBook    
-		//appends to addressBook list if multiple books supported
-    	//returns true if successful, false otherwise
-	
-	public abstract Controller createNewAddressBook(); 
-	
-	public abstract int openAddressBook(String fileName);
-		//sets filePath
-    	//returns number of entries read correctly if filename successfully found and parsed, -1 if nothing otherwise
-	
-	public abstract int importAddressBook(String fileName);
-	
-	public abstract boolean saveAddressBook();
-		//checks for recorded filename: if found, save to filename; if not request filename from GUI
-	
-	public abstract boolean saveAsAddressBook(String fileName);
-		//sets filePath
-    	//attempt to save data to filename, returns true if successful, false otherwise.
-		//Does not check for file collision, overwrites if filename already exists
-	
-	public abstract boolean closeAddressBook();
+	public abstract void setAddressBookName(String name);
 		//unset data member var
     	//returns true if successful, false otherwise
 	
@@ -71,4 +45,29 @@ public abstract class Controller {
 	public abstract void closeAllAddressBook();
 
 	public abstract List<Entry> getEntryList(String searchTerm);
+	
+	// GUI file menu calls
+	public abstract Controller createWindowForNewAddressBook(); 
+	// opens a new addressbook that ask user to enter a name for.
+	
+	public abstract Controller createWindowForExistingAddressBook();
+	// opens a existing addressbook stored in a file. return null if failed.
+
+	public abstract boolean createDialogForSaveAddressBook();
+		//checks for recorded filename: if found, save to filename; if not request filename from GUI
+	
+	public abstract boolean saveCurrentAddressBook();
+	
+	public abstract boolean closeAddressBook();
+		//sets filePath
+    	//attempt to save data to filename, returns true if successful, false otherwise.
+		//Does not check for file collision, overwrites if filename already exists
+	
+	// export the address book in required format.
+	
+	// file operations for models
+	public abstract int openAddressBook(String fileName);
+	public abstract boolean saveAddressBook(String fileName);
+	public abstract int importAddressBook(String fileName);
+	public abstract boolean exportAddressBook(String fileName);
 }

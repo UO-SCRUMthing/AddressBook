@@ -36,8 +36,6 @@ import edu.uoregon.scrumthing.Entry;
 
 public class AddressBookGUI extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
-	private static final String SaveFileExtension = "tsv";
-	private static final String ImportFileExtension = "tsv";
 	
 	protected Controller controller;
 	private AddressDetailPanel detailPane;
@@ -55,8 +53,8 @@ public class AddressBookGUI extends JFrame {
 	private ArrayList<JComponent> disableComponents;
 	
 	// TODO: need controller
-	public AddressBookGUI(Controller controller) {
-		super("Address Book");
+	public AddressBookGUI(JFrame relative, Controller controller) {
+		super(controller.getAddressBookName());
 		// this.data = data;
 		this.disableComponents = new ArrayList<JComponent>();
 		this.editing = false;
@@ -70,7 +68,6 @@ public class AddressBookGUI extends JFrame {
         //Display
 		this.setSize(new Dimension(640, 480));
 		this.setMinimumSize(new Dimension(320, 240));
-		this.setVisible(true);
 		
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -78,6 +75,10 @@ public class AddressBookGUI extends JFrame {
             }
         });
         
+        this.setLocationRelativeTo(relative);
+        if (relative != null)
+        		this.setLocation(this.getLocation().x+20, this.getLocation().y+20);
+		this.setVisible(true);
 	}
 	
 	private JMenuBar createMenuBar() {
@@ -95,7 +96,7 @@ public class AddressBookGUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO: name input
-					controller.createNewAddressBook();
+					controller.openAddressBook();
 				}
 			});
 			
@@ -110,10 +111,8 @@ public class AddressBookGUI extends JFrame {
 				    int returnVal = fileDiag.showOpenDialog(AddressBookGUI.this);
 				    if(returnVal == JFileChooser.APPROVE_OPTION) {
 				    		// Open file and notice any failure
-				    		Controller newApp = controller.createNewAddressBook();
-				    		if (newApp.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath()) <= 0) {
+				    		if (controller.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath()) == null) {
 				    			notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
-				    			newApp.closeAddressBook();
 				    		} else {
 				    			notice("New window opened.", 0);
 				    		}
