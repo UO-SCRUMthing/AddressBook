@@ -86,7 +86,6 @@ public class Application extends Controller {
 			return false;
 		}
 		return true;
-
 	}
 	
 	private void saveLastAddressBook(File file) {
@@ -102,6 +101,9 @@ public class Application extends Controller {
 
 	@Override
 	public int openAddressBook(String fileName) {
+		if (!fileName.endsWith(".tsv")) {
+			return -1;
+		}
 		File file = new File(fileName);
 		// creates new AddressBook to dump data into
 		int successes = -1;
