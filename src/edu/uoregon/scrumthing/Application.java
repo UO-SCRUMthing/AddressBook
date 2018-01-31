@@ -327,18 +327,7 @@ public class Application extends Controller {
 		appPool.add(newApp);
 		newApp.GUI.setVisible(true);
 		
-		String newAddressBookName = (String)JOptionPane.showInputDialog(
-                newApp.GUI,
-                "Please enter a name",
-                "New Address Book",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                "Unnamed Address Book");
-
-		if ((newAddressBookName != null) && (newAddressBookName.length() > 0)) {
-			newApp.setAddressBookName(newAddressBookName);
-		} else {
+		if (!newApp.createRenameDialog()) {
 			newApp.closeAddressBook();
 			newApp = null;
 		}
@@ -394,5 +383,25 @@ public class Application extends Controller {
 		else {
 			return saveAddressBook(filePath);
 		}
+	}
+
+	@Override
+	public boolean createRenameDialog() {
+		String newAddressBookName = (String)JOptionPane.showInputDialog(
+                GUI,
+                "Please enter a name",
+                "New Address Book",
+                JOptionPane.PLAIN_MESSAGE,
+                null,
+                null,
+                "Unnamed Address Book");
+
+		if ((newAddressBookName != null) && (newAddressBookName.length() > 0)) {
+			setAddressBookName(newAddressBookName);
+			modified = true;
+			return true;
+		}
+		
+		return false;
 	}
 }

@@ -26,7 +26,10 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -67,7 +70,7 @@ public class AddressBookGUI extends JFrame {
  
         //Display
 		this.setSize(new Dimension(640, 480));
-		this.setMinimumSize(new Dimension(320, 240));
+		this.setMinimumSize(new Dimension(480, 300));
 		
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent e) {
@@ -159,7 +162,10 @@ public class AddressBookGUI extends JFrame {
 	}
 	
 	private JPanel createToolbar() {
-		JPanel toolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		JPanel leftToolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		JPanel rightToolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
+		JPanel toolbar = new JPanel(new BorderLayout());
+		
 		sortCombo = new JComboBox<String>();
 		sortCombo.setPreferredSize(new Dimension(100,20));
 		sortCombo.addItem("name");
@@ -175,7 +181,7 @@ public class AddressBookGUI extends JFrame {
 		        }
 			}
 		});
-		toolbar.add(sortCombo);
+		leftToolbar.add(sortCombo);
 		// Disable sort while editing
 		disableComponents.add(sortCombo);
 		
@@ -216,10 +222,73 @@ public class AddressBookGUI extends JFrame {
 			}
 		});
 		
-		toolbar.add(newEntryButton);
-		toolbar.add(removeEntryButton);
+		leftToolbar.add(newEntryButton);
+		leftToolbar.add(removeEntryButton);
+		
 		disableComponents.add(newEntryButton);
 		disableComponents.add(removeEntryButton);
+		
+		JTextField searchField = new JTextField();
+		searchField.setMinimumSize(new Dimension(100, 25));
+		searchField.setPreferredSize(new Dimension(200, 25));
+		JButton searchButton = new JButton("Go");
+		JButton clearButton = new JButton("X");
+		
+		ActionListener searchAction = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String searchTerm = searchField.getText();
+				if (searchTerm != null && searchTerm.length() > 0)
+					updateList(searchTerm);
+				else
+					updateList();
+			}
+		};
+		
+		searchField.addActionListener(searchAction);
+		searchField.getDocument().addDocumentListener(new DocumentListener() {
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {
+				if (e.getDocument().getLength() == 0) {
+					updateList();
+				}
+			}
+
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				if (e.getDocument().getLength() == 0) {
+					updateList();
+				}
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				if (e.getDocument().getLength() == 0) {
+					updateList();
+				}
+			}
+		});
+		
+		searchButton.addActionListener(searchAction);
+		clearButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				searchField.setText("");
+			}
+		});
+		
+		disableComponents.add(searchField);
+		disableComponents.add(clearButton);
+		disableComponents.add(searchButton);
+		
+		rightToolbar.add(searchField);
+		rightToolbar.add(clearButton);
+		rightToolbar.add(searchButton);
+		
+		toolbar.add(leftToolbar, BorderLayout.LINE_START);
+		toolbar.add(rightToolbar, BorderLayout.LINE_END);
+		
 		return toolbar;
 	}
 
@@ -317,6 +386,15 @@ public class AddressBookGUI extends JFrame {
 	public void updateList() {
 		int lastSelected = selectedIndex;
 		contactList.setListData(controller.getEntryList().toArray());
+		contactList.revalidate();
+		contactList.repaint();
+		contactList.setSelectedIndex(lastSelected);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void updateList(String searchTerm) {
+		int lastSelected = selectedIndex;
+		contactList.setListData(controller.getEntryList(searchTerm).toArray());
 		contactList.revalidate();
 		contactList.repaint();
 		contactList.setSelectedIndex(lastSelected);

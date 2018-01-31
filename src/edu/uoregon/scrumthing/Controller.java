@@ -56,6 +56,8 @@ public abstract class Controller {
 	public abstract boolean createDialogForSaveAddressBook();
 		//checks for recorded filename: if found, save to filename; if not request filename from GUI
 	
+	public abstract boolean createRenameDialog();
+	
 	public abstract boolean saveCurrentAddressBook();
 	
 	public abstract boolean closeAddressBook();
