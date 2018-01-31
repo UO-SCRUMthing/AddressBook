@@ -50,8 +50,11 @@ public class Application extends Controller {
 	    appPool.add(app);
 	    if (!app.loadLastAddressBook()) {
     			app.closeAddressBook();
-	    		app.openAddressBook();
+    			app = (Application)app.createWindowForNewAddressBook();
+	    } else {
+	    	app.GUI.setVisible(true);
 	    }
+	    
 //	    app.openAddressBook("src/ABTestSimple.tsv");	
 //	    app.saveAsAddressBook("src/ABTestSimpleTEST.tsv");
 //	    app.openAddressBook("src/ABTestSimpleTEST.tsv");	
@@ -213,6 +216,7 @@ public class Application extends Controller {
 		}
 		if (success) {
 			modified = false;
+			this.filePath = filePath;
 			GUI.notice("Saved file: " + file.getName(), 0);
 			saveLastAddressBook(file);
 		}
@@ -230,12 +234,10 @@ public class Application extends Controller {
 			
 			switch (n) {
 			case JOptionPane.YES_OPTION:
-				this.saveAddressBook();
+				if (!this.saveCurrentAddressBook()) return false;
 				break;
-			case JOptionPane.NO_OPTION:
-				break;
-			default:
-				break;
+			case JOptionPane.CANCEL_OPTION:
+				return false;
 			}
 		}
 		GUI.dispose();
@@ -308,9 +310,22 @@ public class Application extends Controller {
 	}
 	
 	@Override
-	public Controller openAddressBook() {
+	public boolean exportAddressBook(String fileName) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void setAddressBookName(String name) {
+		addressBook.setAddressBookName(name);
+		GUI.setTitle(name);
+	}
+
+	@Override
+	public Controller createWindowForNewAddressBook() {
 		Application newApp = new Application(GUI);
 		appPool.add(newApp);
+		newApp.GUI.setVisible(true);
 		
 		String newAddressBookName = (String)JOptionPane.showInputDialog(
                 newApp.GUI,
@@ -331,36 +346,6 @@ public class Application extends Controller {
 	}
 
 	@Override
-	public boolean exportAddressBook(String fileName) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setAddressBookName(String name) {
-		addressBook.setAddressBookName(name);
-		GUI.setTitle(name);
-	}
-
-	@Override
-	public Controller createWindowForNewAddressBook() {
-		Application newApp = new Application(GUI, fileName);
-		newApp.loadAddressBook(fileName);
-		appPool.add(newApp);
-		return newApp;
-	}
-
-	@Override
-	/*
-	public boolean saveAddressBook(String filePath) {
-		boolean saved = this.saveAsAddressBook(filePath);
-		if (saved) {
-			modified = false;
-		}
-		return saved;
-	}*/
-	
-	@Override
 	public Controller createWindowForExistingAddressBook() {
 		JFileChooser fileDiag = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
@@ -368,10 +353,19 @@ public class Application extends Controller {
 	    int returnVal = fileDiag.showOpenDialog(GUI);
 	    if(returnVal == JFileChooser.APPROVE_OPTION) {
 	    		// Open file and notice any failure
-	    		if (controller.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath()) == null) {
-	    			notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
+	    		String filename = fileDiag.getSelectedFile().getAbsolutePath();
+	    		
+	    		Application newApp = new Application(GUI);
+
+	    		if (openAddressBook(filename) < 0) {
+	    			GUI.notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
+	    			newApp.GUI.dispose();
+	    			return null;
 	    		} else {
-	    			notice("New window opened.", 0);
+	    			GUI.notice("New window opened.", 0);
+	       			newApp.GUI.setVisible(true);
+	    			appPool.add(newApp);
+	    			return newApp;
 	    		}
 	    }
 		return null;
@@ -379,13 +373,26 @@ public class Application extends Controller {
 
 	@Override
 	public boolean createDialogForSaveAddressBook() {
-		// TODO Auto-generated method stub
+		JFileChooser fileDiag = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
+		fileDiag.setFileFilter(filter);
+	    int returnVal = fileDiag.showSaveDialog(GUI);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    		// Add a extension if there isn't one
+	    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
+	    	   	if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
+	    	   	return saveAddressBook(filename);
+	    }
 		return false;
 	}
 
 	@Override
 	public boolean saveCurrentAddressBook() {
-		// TODO Auto-generated method stub
-		return false;
+		if (filePath == null || filePath.length() <= 0) {
+			return createDialogForSaveAddressBook();
+		}
+		else {
+			return saveAddressBook(filePath);
+		}
 	}
 }

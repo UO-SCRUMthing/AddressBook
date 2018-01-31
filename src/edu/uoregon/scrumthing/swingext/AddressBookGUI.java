@@ -78,7 +78,6 @@ public class AddressBookGUI extends JFrame {
         this.setLocationRelativeTo(relative);
         if (relative != null)
         		this.setLocation(this.getLocation().x+20, this.getLocation().y+20);
-		this.setVisible(true);
 	}
 	
 	private JMenuBar createMenuBar() {
@@ -96,7 +95,7 @@ public class AddressBookGUI extends JFrame {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					// TODO: name input
-					controller.openAddressBook();
+					controller.createWindowForNewAddressBook();
 				}
 			});
 			
@@ -105,18 +104,7 @@ public class AddressBookGUI extends JFrame {
 			itemOpen.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser fileDiag = new JFileChooser();
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
-					fileDiag.setFileFilter(filter);
-				    int returnVal = fileDiag.showOpenDialog(AddressBookGUI.this);
-				    if(returnVal == JFileChooser.APPROVE_OPTION) {
-				    		// Open file and notice any failure
-				    		if (controller.openAddressBook(fileDiag.getSelectedFile().getAbsolutePath()) == null) {
-				    			notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
-				    		} else {
-				    			notice("New window opened.", 0);
-				    		}
-				    }
+					controller.createWindowForExistingAddressBook();
 				}
 			});
 			
@@ -125,7 +113,7 @@ public class AddressBookGUI extends JFrame {
 			itemSave.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					controller.saveAddressBook();
+					controller.saveCurrentAddressBook();
 				}
 			});
 			
@@ -134,16 +122,7 @@ public class AddressBookGUI extends JFrame {
 			itemSaveAs.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					JFileChooser fileDiag = new JFileChooser();
-					FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
-					fileDiag.setFileFilter(filter);
-				    int returnVal = fileDiag.showSaveDialog(AddressBookGUI.this);
-				    if(returnVal == JFileChooser.APPROVE_OPTION) {
-				    		// Add a extension if there isn't one
-				    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
-				    	   	if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
-				    	   	controller.saveAsAddressBook(filename);
-				    }
+					controller.createDialogForSaveAddressBook();
 				}
 			});
 			
@@ -152,7 +131,6 @@ public class AddressBookGUI extends JFrame {
 			itemClose.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					// Trigger window closing events
 					close();
 				}
 			});
