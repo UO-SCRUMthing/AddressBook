@@ -6,6 +6,18 @@ import java.util.HashMap;
 import java.util.List;
 
 public abstract class Entry implements Comparable<Entry>{
+	public static boolean FieldCheck(String field, String value) {
+		switch (field) {
+		case "zip":
+			break;
+		case "phoneNumber":
+			break;
+		case "email":
+			break;
+		}
+		return true;
+	}
+	
 	List<SimpleEntry<String, String>> detailList;
 	
 	/**

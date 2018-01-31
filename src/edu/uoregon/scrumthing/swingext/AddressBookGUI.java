@@ -23,6 +23,7 @@ import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -262,10 +263,19 @@ public class AddressBookGUI extends JFrame {
 					notice("Please select a contact to delete", 1);
 					return;
 				}
-				contactList.clearSelection();
-				selectedIndex = -1;
-				controller.deleteEntry(deletingIndex);
-				updateList();
+				
+				int n = JOptionPane.showConfirmDialog(
+					    AddressBookGUI.this,
+					    "Are you sure you want to delete selected contact?",
+					    controller.getAddressBookName(),
+					    JOptionPane.YES_NO_OPTION);
+				
+				if (n == JOptionPane.YES_OPTION) {
+					contactList.clearSelection();
+					selectedIndex = -1;
+					controller.deleteEntry(deletingIndex);
+					updateList();
+				}
 			}
 		});
 		
