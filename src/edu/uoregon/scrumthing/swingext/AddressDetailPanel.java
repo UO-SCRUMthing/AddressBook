@@ -223,22 +223,21 @@ public class AddressDetailPanel extends JPanel {
 		if (index == NEW && emptyEntry != null) {
 			emptyEntry.updateDetails(fields);
 			gui.controller.addNewEntry(emptyEntry);
-			gui.setNoSorting();
 		} else if (index >= 0){
 			gui.controller.updateEntry(index, fields);
 		}
-		exitEditMode(true);
+		exitEditMode();
 	}
 	
 	private void discardChange() {
-		exitEditMode(false);
+		exitEditMode();
 		if (index == NEW) gui.removeDetailPanel();
 		else updateFieldFromDetail();
 
 	}
 	
 	@SuppressWarnings("rawtypes")
-	private void exitEditMode(boolean saved) {
+	private void exitEditMode() {
 		editMode = false;
 		editButtonSet.removeAll();
 		editButtonSet.add(editButton);
@@ -252,14 +251,8 @@ public class AddressDetailPanel extends JPanel {
 	        JComponent field = (JComponent)pair.getValue();
 	        field.setEnabled(false);
 	    }
-	    if (saved && index == NEW) {
-	    		gui.exitEditMode(true);
-	    } else {
-	    		gui.exitEditMode(false);
-	    }
-	    
-	
-	    
+
+	    	gui.exitEditMode();    
 	}
 	
 	@SuppressWarnings("rawtypes")

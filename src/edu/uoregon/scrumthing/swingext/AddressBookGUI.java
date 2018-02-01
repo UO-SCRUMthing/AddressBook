@@ -64,6 +64,7 @@ public class AddressBookGUI extends JFrame {
 	private JButton clearButton;
 	private JTextField searchField;
 	private JButton newEntryButton;
+	private JMenuItem itemAddContact;
 	
 	private ActionListener addContactAction = new ActionListener() {
 		@Override
@@ -208,7 +209,7 @@ public class AddressBookGUI extends JFrame {
 			/* EditMenu */ 
 			editMenu.setMnemonic(KeyEvent.VK_E);
 			
-			JMenuItem itemAddContact = new JMenuItem("Add a contact");
+			itemAddContact = new JMenuItem("Add a contact");
 			itemAddContact.setMnemonic(KeyEvent.VK_A);
 			itemAddContact.addActionListener(addContactAction);
 			
@@ -271,9 +272,9 @@ public class AddressBookGUI extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String searchTerm = searchField.getText();
 				if (searchTerm != null && searchTerm.length() > 0)
-					updateList(searchTerm);
+					enterSearchMode(searchTerm);
 				else
-					updateList();
+					exitSearchMode();
 			}
 		};
 		
@@ -283,21 +284,21 @@ public class AddressBookGUI extends JFrame {
 			@Override
 			public void changedUpdate(DocumentEvent e) {
 				if (e.getDocument().getLength() == 0) {
-					updateList();
+					exitSearchMode();
 				}
 			}
 
 			@Override
 			public void insertUpdate(DocumentEvent e) {
 				if (e.getDocument().getLength() == 0) {
-					updateList();
+					exitSearchMode();
 				}
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
 				if (e.getDocument().getLength() == 0) {
-					updateList();
+					exitSearchMode();
 				}
 			}
 		});
@@ -458,21 +459,13 @@ public class AddressBookGUI extends JFrame {
 		notice(" ", 0);
 	}
 	
-	protected void exitEditMode(boolean selectNew) {
+	protected void exitEditMode() {
 		for (JComponent comp : disableComponents) {
 			comp.setEnabled(true);
 		}
 		editing = false;
 		contactList.setEnabled(true);
-		if (searchField.getText().isEmpty())
-			updateList();
-		else
-			updateList(searchField.getText());
-		
-		if (selectNew) {
-			if (!controller.getEntryList().isEmpty())
-				contactList.setSelectedIndex(controller.getEntryList().size() - 1);
-		}
+		updateList();
 	}
 	
 	protected void removeDetailPanel() {
@@ -482,29 +475,49 @@ public class AddressBookGUI extends JFrame {
 		splitRight.repaint();
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void updateList() {
-		if (listHeader != null) listHeader.setText("");
-		if (clearButton != null) clearButton.setVisible(false);
-		if (newEntryButton != null) newEntryButton.setVisible(true);
-		
-		int lastSelected = selectedIndex;
-		contactList.setListData(controller.getEntryList().toArray());
-		contactList.revalidate();
-		contactList.repaint();
-		contactList.setSelectedIndex(lastSelected);
+		if (searchField == null) {
+			exitSearchMode();
+			return;
+		}
+		if (!searchField.getText().isEmpty())
+			enterSearchMode(searchField.getText());
+		else
+			exitSearchMode();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void updateList(String searchTerm) {
+	public void exitSearchMode() {
+		if (listHeader != null) listHeader.setText("");
+		if (clearButton != null) clearButton.setVisible(false);
+		if (newEntryButton != null) newEntryButton.setVisible(true);
+		if (itemAddContact != null) itemAddContact.setEnabled(true);
+		
+		contactList.setListData(controller.getEntryList().toArray());
+		int lastSelected = controller.getSelectedIndex();
+		contactList.revalidate();
+		contactList.repaint();
+		if (lastSelected >= 0)
+			contactList.setSelectedIndex(lastSelected);
+		else
+			contactList.clearSelection();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void enterSearchMode(String searchTerm) {
+		System.out.println("hey");
 		if (listHeader != null) listHeader.setText("Search result:");
 		if (clearButton != null) clearButton.setVisible(true);
 		if (newEntryButton != null) newEntryButton.setVisible(false);
-		int lastSelected = selectedIndex;
+		if (itemAddContact != null) itemAddContact.setEnabled(false);
 		contactList.setListData(controller.getEntryList(searchTerm).toArray());
+		int lastSelected = controller.getSelectedIndex();
 		contactList.revalidate();
 		contactList.repaint();
-		contactList.setSelectedIndex(lastSelected);
+		if (lastSelected >= 0)
+			contactList.setSelectedIndex(lastSelected);
+		else
+			contactList.clearSelection();
 	}
 	
 	public void notice(String text, int warning_level) {
@@ -525,9 +538,5 @@ public class AddressBookGUI extends JFrame {
 		}
 		status.revalidate();
 		status.repaint();
-	}
-	
-	public void setNoSorting() {
-		sortCombo.setSelectedIndex(-1);
 	}
 }

@@ -46,6 +46,8 @@ public abstract class Controller {
 
 	public abstract List<Entry> getEntryList(String searchTerm);
 	
+	public abstract int getSelectedIndex();
+	
 	// GUI file menu calls
 	public abstract Controller createWindowForNewAddressBook(); 
 	// opens a new addressbook that ask user to enter a name for.
