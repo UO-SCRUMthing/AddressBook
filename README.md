@@ -34,3 +34,11 @@ __AddressDetailPanel.java__ is the class the manages displaying the actual conta
 __NamePlatePanel.java__ manages the name plate above the detail panel when displaying a contact and being able to be edited when needed. 
 
 __RegexDocumentFilter.java__ is a custom document filter that restrict user input using regex which is currently being used for ZIP code and Phone Number fields.
+
+### Building & Running
+
+This repo contains Eclipse project settings which can be imported by Eclipse Oxygen.2 and above.
+
+JUnit 5 is used for unit testing which can be run by Eclipse Oxygen and above.
+
+If imported to other IDE (i.e. IntelliJ IDEA), it is nessassary to import JUnit 5 library as well or to delete the edu.uoregon.scrumthing.test package entirely to avoid building errors.
