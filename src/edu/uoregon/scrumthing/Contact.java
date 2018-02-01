@@ -10,7 +10,6 @@ import java.util.List;
 public class Contact extends Entry implements Comparable<Entry> {
     private List<SimpleEntry<String, String>> detailList = new ArrayList<SimpleEntry<String, String>>();  
     private static List<String> defaultFields = Arrays.asList("firstName", "lastName", "address1", "address2", "city", "state", "zip", "email", "phoneNumber");
-//    private static List<String> defaultFields = Arrays.asList("First Name", "Last Name", "Address", "City", "State", "Zip", "Email", "Phone Number");
     private ArrayList<String> allFieldNames = new ArrayList<String>(defaultFields);
     
     public Contact(String _firstName, String _lastName, String _address1, String _address2, String _city, String _state, String _zip, String _phoneNumber, String _email) {

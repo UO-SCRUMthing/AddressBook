@@ -23,6 +23,7 @@ import edu.uoregon.scrumthing.swingext.AddressBookGUI;
 public class Application extends Controller {
 	private static final String SaveFileExtension = "sab";
 	private static final String ImportFileExtension = "tsv";
+	private static final String tempFilePath = System.getProperty("user.home") + File.separator + "scrumthingAddressBookTempFile.tmp";
 	
 	EntryContainer<Entry> addressBook; 
 	AddressBookGUI GUI;
@@ -32,7 +33,6 @@ public class Application extends Controller {
 	private String filePath;
 	private static List<String> parsingFields = Arrays.asList("city", "state", "zip", "address1", "address2", "lastName", "firstName", "phoneNumber", "email");
 	private boolean modified = false;
-	private String tempFilePath = System.getProperty("user.home") + File.separator + "scrumthingAddressBookTempFile.tmp";
 	
 	ControllerNode node;
 	
@@ -56,12 +56,6 @@ public class Application extends Controller {
 	    } else {
 	    	app.GUI.setVisible(true);
 	    }
-	    
-//	    app.openAddressBook("src/ABTestSimple.tsv");	
-//	    app.saveAsAddressBook("src/ABTestSimpleTEST.tsv");
-//	    app.openAddressBook("src/ABTestSimpleTEST.tsv");	
-//	    app.saveAsAddressBook("src/ABTestSimpleTEST2.tsv");
-
 	}
 	
 	public Application(JFrame relative) {
@@ -79,7 +73,7 @@ public class Application extends Controller {
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(tempFilePath));
 		    String str = reader.readLine();
-		    if (str != null) {
+		    if (str.trim() != null) {
 		    		result = openAddressBook(str);
 		    }
 		    reader.close();
@@ -87,7 +81,9 @@ public class Application extends Controller {
 			return false;
 		}
 		
-		if (result < 0) return false;
+		if (result < 0) {
+			return false;
+		}
 		return true;
 	}
 	

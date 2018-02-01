@@ -6,7 +6,7 @@ import java.util.Collections;
 
 public class AddressBook extends EntryContainer<Entry> {
 	private List<Entry> sortedContactList = new ArrayList<Entry>();
-	private List<Entry> searchResults;
+	private List<Entry> searchResults = null;
 	private String sortedOn = "name";
 	private String addressBookName;
 
@@ -69,7 +69,7 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public List<Entry> getAll(String searchTerm) {
 		String[] parts = searchTerm.toLowerCase().split(" ");
-		List<Entry> searchResults = new ArrayList<Entry>();
+		searchResults = new ArrayList<Entry>();
 		for (Entry entry : sortedContactList) {
 			boolean contains = true;
 			for (String part : parts) {
@@ -82,7 +82,6 @@ public class AddressBook extends EntryContainer<Entry> {
 				searchResults.add(entry);
 			}
 		}
-		this.searchResults = searchResults;
 		return searchResults;
 	}
 
