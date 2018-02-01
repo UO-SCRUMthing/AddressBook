@@ -23,11 +23,11 @@ __AddressBook.java__ extends EntryContrainer.java and defines various methods th
 
 __Contact.java__ extends Entry.java and defines methods that work on an individual contacts. A contact is a wrapper on an ArrayList of SimpleEntries which are basically tuples. The SimpleEntries are in a very specific order as defined by <defaultFields> to facilitate quick retrieval of data fields but each SimpleEntry also has its associated field name for ease of display.  
 
-__ControllerPool.java__ implements and iterable collection of applications so that the user can have multiple address books open at the same time. 
+__ControllerPool.java__ implements an iterable collection of applications so that the user can have multiple address books open at the same time. 
 
 ### GUI Files
 
-__AddressBookGUI.java__ is the main GUI class that manages creating menus, populating lists, displaying contacts, interpreting user input. 
+__AddressBookGUI.java__ is the main GUI class that manages creating menus, populating lists, displaying contacts, and interpreting user input. 
 
 __AddressDetailPanel.java__ is the class the manages displaying the actual contact information and being able to edit each contact on the fly. 
 
