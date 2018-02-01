@@ -27,7 +27,7 @@ __ControllerPool.java__ implements an iterable collection of applications so tha
 
 ### GUI Files
 
-__AddressBookGUI.java__ is the main GUI class that manages creating menus, populating lists, displaying contacts, interpreting user input. 
+__AddressBookGUI.java__ is the main GUI class that manages creating menus, populating lists, displaying contacts, and interpreting user input. 
 
 __AddressDetailPanel.java__ is the class the manages displaying the actual contact information and being able to edit each contact on the fly. 
 
