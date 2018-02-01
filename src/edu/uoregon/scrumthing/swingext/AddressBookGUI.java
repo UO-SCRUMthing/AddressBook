@@ -4,7 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Font;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -266,6 +266,7 @@ public class AddressBookGUI extends JFrame {
 		JButton searchButton = new JButton("Go");
 
 		searchButton.setPreferredSize(new Dimension(30, 20));
+		searchButton.setMargin(new Insets(0,0,0,0));
 		
 		ActionListener searchAction = new ActionListener() {
 			@Override
@@ -331,10 +332,12 @@ public class AddressBookGUI extends JFrame {
 			// TODO: change button placement
 			newEntryButton = new JButton("+");
 			newEntryButton.setToolTipText("Create new contact");
-			newEntryButton.setPreferredSize(new Dimension(15,15));
+			newEntryButton.setPreferredSize(new Dimension(20,20));
+			newEntryButton.setMargin(new Insets(0, 0, 0, 0));
 			JButton removeEntryButton = new JButton("-");
 			removeEntryButton.setToolTipText("Remove selected contact");
-			removeEntryButton.setPreferredSize(new Dimension(15,15));
+			removeEntryButton.setPreferredSize(new Dimension(20,20));
+			removeEntryButton.setMargin(new Insets(0, 0, 0, 0));
 			
 			newEntryButton.addActionListener(addContactAction);
 			
@@ -380,7 +383,8 @@ public class AddressBookGUI extends JFrame {
 		searchHeader.add(listHeader, BorderLayout.LINE_START);
 		
 		clearButton = new JButton("x");
-		clearButton.setPreferredSize(new Dimension(15,15));
+		clearButton.setPreferredSize(new Dimension(20,20));
+		clearButton.setMargin(new Insets(0, 0, 0, 0));
 		// Make it red
 		clearButton.setForeground(Color.RED);
 		clearButton.setVisible(false);
