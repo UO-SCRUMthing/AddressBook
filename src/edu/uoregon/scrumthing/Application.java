@@ -170,7 +170,7 @@ public class Application extends Controller {
 			return null;
 		} else if (parts[6].isEmpty() || parts[5].isEmpty()) { // if one name field is empty 
 			for (String field : parts) {
-				if (field.isEmpty()) {
+				if (field.trim().isEmpty()) {
 					emptyFields++;
 				}
 			}
@@ -244,11 +244,15 @@ public class Application extends Controller {
 		boolean success = false;
 		try {
 			writer = new BufferedWriter(new FileWriter(file));
+			writer.append("");
+			writer.close();
+			writer = new BufferedWriter(new FileWriter(file, true));
 			header = "sthsabv1\n"+getAddressBookName()+"\n";
+			writer.append(header);
 			for (Entry contact : addressBook.getAll()) {
-				body += contact.toTabString() + "\n";
+				body = contact.toTabString() + "\n";
+				writer.append(body);
 			}
-			writer.append(header + body);
 			success = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -278,13 +282,13 @@ public class Application extends Controller {
 					this.getAddressBookName(),
 					JOptionPane.YES_NO_CANCEL_OPTION);
 			
-			switch (n) {
-			case JOptionPane.YES_OPTION:
-				if (!this.saveCurrentAddressBook()) return false;
-				break;
-			case JOptionPane.CANCEL_OPTION:
-				return false;
-			}
+			switch(n) {
+				case JOptionPane.YES_OPTION:
+					if (!this.saveCurrentAddressBook()) return false;
+					break;
+				case JOptionPane.CANCEL_OPTION:
+					return false;
+				}
 		}
 		GUI.dispose();
 		node.removeSelf();
