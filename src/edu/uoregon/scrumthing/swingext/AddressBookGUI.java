@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -11,7 +12,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -39,6 +39,8 @@ import edu.uoregon.scrumthing.Entry;
 
 public class AddressBookGUI extends JFrame {
 	private static final long serialVersionUID = 3229404744050899834L;
+	// TODO: re-organize ui code
+	
 	
 	protected Controller controller;
 	private AddressDetailPanel detailPane;
@@ -48,12 +50,20 @@ public class AddressBookGUI extends JFrame {
 	private int selectedIndex;
 	private boolean editing;
 	
+	private ArrayList<JComponent> disableComponents;
+	
+	// Status
 	private JPanel status;
 	private JLabel statusText;
 	
+	// Sort
 	private JComboBox<String> sortCombo;
 	
-	private ArrayList<JComponent> disableComponents;
+	// Search
+	private JLabel listHeader;
+	private JButton clearButton;
+	private JTextField searchField;
+	private JButton newEntryButton;
 	
 	private ActionListener addContactAction = new ActionListener() {
 		@Override
@@ -226,6 +236,7 @@ public class AddressBookGUI extends JFrame {
 		JPanel leftToolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		JPanel rightToolbar = new JPanel(new FlowLayout(FlowLayout.LEADING));
 		JPanel toolbar = new JPanel(new BorderLayout());
+		toolbar.setPreferredSize(new Dimension(0, 30));
 		
 		sortCombo = new JComboBox<String>();
 		sortCombo.setPreferredSize(new Dimension(100,20));
@@ -242,55 +253,18 @@ public class AddressBookGUI extends JFrame {
 		        }
 			}
 		});
+		leftToolbar.add(new JLabel("Sort by:"));
 		leftToolbar.add(sortCombo);
+		leftToolbar.setAlignmentY(CENTER_ALIGNMENT);
 		// Disable sort while editing
 		disableComponents.add(sortCombo);
 		
-		
-		// TODO: change button placement
-		JButton newEntryButton = new JButton("+");
-		newEntryButton.setToolTipText("Create new contact");
-		JButton removeEntryButton = new JButton("x");
-		removeEntryButton.setToolTipText("Remove selected contact");
-		
-		newEntryButton.addActionListener(addContactAction);
-		
-		removeEntryButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				int deletingIndex = selectedIndex;
-				// TODO: notify user nothing changed
-				if (deletingIndex < 0) {
-					notice("Please select a contact to delete", 1);
-					return;
-				}
-				
-				int n = JOptionPane.showConfirmDialog(
-					    AddressBookGUI.this,
-					    "Are you sure you want to delete selected contact?",
-					    controller.getAddressBookName(),
-					    JOptionPane.YES_NO_OPTION);
-				
-				if (n == JOptionPane.YES_OPTION) {
-					contactList.clearSelection();
-					selectedIndex = -1;
-					controller.deleteEntry(deletingIndex);
-					updateList();
-				}
-			}
-		});
-		
-		leftToolbar.add(newEntryButton);
-		leftToolbar.add(removeEntryButton);
-		
-		disableComponents.add(newEntryButton);
-		disableComponents.add(removeEntryButton);
-		
-		JTextField searchField = new JTextField();
-		searchField.setMinimumSize(new Dimension(100, 25));
-		searchField.setPreferredSize(new Dimension(200, 25));
+		searchField = new JTextField();
+		searchField.setMinimumSize(new Dimension(100, 20));
+		searchField.setPreferredSize(new Dimension(200, 20));
 		JButton searchButton = new JButton("Go");
-		JButton clearButton = new JButton("X");
+
+		searchButton.setPreferredSize(new Dimension(30, 20));
 		
 		ActionListener searchAction = new ActionListener() {
 			@Override
@@ -329,19 +303,11 @@ public class AddressBookGUI extends JFrame {
 		});
 		
 		searchButton.addActionListener(searchAction);
-		clearButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				searchField.setText("");
-			}
-		});
 		
 		disableComponents.add(searchField);
-		disableComponents.add(clearButton);
 		disableComponents.add(searchButton);
 		
 		rightToolbar.add(searchField);
-		rightToolbar.add(clearButton);
 		rightToolbar.add(searchButton);
 		
 		toolbar.add(leftToolbar, BorderLayout.LINE_START);
@@ -356,10 +322,82 @@ public class AddressBookGUI extends JFrame {
 		contactList = new JList<>();
 		contactList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		updateList();
-		JScrollPane splitLeft = new JScrollPane(contactList);
-		splitLeft.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		splitLeft.setMinimumSize(new Dimension(100, 0));
-		splitLeft.setPreferredSize(new Dimension(150, 0));
+		JPanel splitLeft = new JPanel(new BorderLayout());
+		JPanel footer = new JPanel(new FlowLayout());
+		
+		// List footer buttons
+		{
+			// TODO: change button placement
+			newEntryButton = new JButton("+");
+			newEntryButton.setToolTipText("Create new contact");
+			newEntryButton.setPreferredSize(new Dimension(15,15));
+			JButton removeEntryButton = new JButton("-");
+			removeEntryButton.setToolTipText("Remove selected contact");
+			removeEntryButton.setPreferredSize(new Dimension(15,15));
+			
+			newEntryButton.addActionListener(addContactAction);
+			
+			removeEntryButton.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					int deletingIndex = selectedIndex;
+					// TODO: notify user nothing changed
+					if (deletingIndex < 0) {
+						notice("Please select a contact to delete", 1);
+						return;
+					}
+					
+					int n = JOptionPane.showConfirmDialog(
+						    AddressBookGUI.this,
+						    "Are you sure you want to delete selected contact?",
+						    controller.getAddressBookName(),
+						    JOptionPane.YES_NO_OPTION);
+					
+					if (n == JOptionPane.YES_OPTION) {
+						contactList.clearSelection();
+						selectedIndex = -1;
+						controller.deleteEntry(deletingIndex);
+						updateList();
+					}
+				}
+			});
+			
+			footer.add(newEntryButton);
+			footer.add(removeEntryButton);
+			
+			disableComponents.add(newEntryButton);
+			disableComponents.add(removeEntryButton);
+		}
+		
+		JScrollPane listScroll = new JScrollPane(contactList);
+		listScroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		listScroll.setMinimumSize(new Dimension(100, 0));
+		listScroll.setPreferredSize(new Dimension(150, 0));
+		
+		JPanel searchHeader = new JPanel(new BorderLayout());
+		listHeader = new JLabel("");
+		searchHeader.add(listHeader, BorderLayout.LINE_START);
+		
+		clearButton = new JButton("x");
+		clearButton.setPreferredSize(new Dimension(15,15));
+		// Make it red
+		clearButton.setForeground(Color.RED);
+		clearButton.setVisible(false);
+		//clearButton.setToolTipText("Exit search");
+		
+		// Change clearButton
+		clearButton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				searchField.setText("");
+			}
+		});
+		disableComponents.add(clearButton);
+		searchHeader.add(clearButton, BorderLayout.LINE_END);
+		
+		splitLeft.add(searchHeader, BorderLayout.PAGE_START);
+		splitLeft.add(listScroll, BorderLayout.CENTER);
+		splitLeft.add(footer, BorderLayout.PAGE_END);
 		
 		splitRight = new JScrollPane();
 		splitRight.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -426,7 +464,11 @@ public class AddressBookGUI extends JFrame {
 		}
 		editing = false;
 		contactList.setEnabled(true);
-		updateList();
+		if (searchField.getText().isEmpty())
+			updateList();
+		else
+			updateList(searchField.getText());
+		
 		if (selectNew) {
 			if (!controller.getEntryList().isEmpty())
 				contactList.setSelectedIndex(controller.getEntryList().size() - 1);
@@ -442,6 +484,10 @@ public class AddressBookGUI extends JFrame {
 	
 	@SuppressWarnings("unchecked")
 	public void updateList() {
+		if (listHeader != null) listHeader.setText("");
+		if (clearButton != null) clearButton.setVisible(false);
+		if (newEntryButton != null) newEntryButton.setVisible(true);
+		
 		int lastSelected = selectedIndex;
 		contactList.setListData(controller.getEntryList().toArray());
 		contactList.revalidate();
@@ -451,6 +497,9 @@ public class AddressBookGUI extends JFrame {
 	
 	@SuppressWarnings("unchecked")
 	public void updateList(String searchTerm) {
+		if (listHeader != null) listHeader.setText("Search result:");
+		if (clearButton != null) clearButton.setVisible(true);
+		if (newEntryButton != null) newEntryButton.setVisible(false);
 		int lastSelected = selectedIndex;
 		contactList.setListData(controller.getEntryList(searchTerm).toArray());
 		contactList.revalidate();

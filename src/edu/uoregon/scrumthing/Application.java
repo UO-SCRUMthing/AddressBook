@@ -101,9 +101,6 @@ public class Application extends Controller {
 	}
 
 	public int openAddressBook(String fileName) {
-		if (!fileName.endsWith(".tsv")) {
-			return -1;
-		}
 		File file = new File(fileName);
 		
 		// create a new one just to be sure not to use any old one
