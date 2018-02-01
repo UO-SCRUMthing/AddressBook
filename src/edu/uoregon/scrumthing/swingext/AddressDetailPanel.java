@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.AbstractDocument;
 
 import edu.uoregon.scrumthing.Entry;
 
@@ -31,15 +32,15 @@ public class AddressDetailPanel extends JPanel {
 	private static final int NEW = -1;
 	private static final HashMap<String, String> fieldName = new HashMap<>();
 	static {
-		fieldName.put("city", "City");
-		fieldName.put("state", "State");
-		fieldName.put("zip", "ZIP Code");
-		fieldName.put("address1", "Address");
-		fieldName.put("address2", "       ");
-		fieldName.put("lastName", "Last Name");
-		fieldName.put("firstName", "First Name");
-		fieldName.put("phoneNumber", "Phone Number");
-		fieldName.put("email", "E-mail");
+		fieldName.put("city", "City: ");
+		fieldName.put("state", "State: ");
+		fieldName.put("zip", "ZIP Code: ");
+		fieldName.put("address1", "Address Line 1: ");
+		fieldName.put("address2", "Address Line 2: ");
+		fieldName.put("lastName", "Last Name: ");
+		fieldName.put("firstName", "First Name: ");
+		fieldName.put("phoneNumber", "Phone Number: ");
+		fieldName.put("email", "E-mail: ");
 	}
 	
 	private AddressBookGUI gui;
@@ -105,7 +106,7 @@ public class AddressDetailPanel extends JPanel {
 				}
 				if (!highlightWarningFields().isEmpty()) {
 					int n = JOptionPane.showConfirmDialog(
-						    gui,
+							namePlate,
 						    "There is at least one field which does not meet U.S. Postal standards. Would you like to proceed?",
 						    gui.controller.getAddressBookName(),
 						    JOptionPane.YES_NO_OPTION);
@@ -154,7 +155,9 @@ public class AddressDetailPanel extends JPanel {
 		}
 		else {
 			JTextField newTextField = new JTextField(value);
+			newTextField.setDisabledTextColor(Color.BLACK);
 			newTextField.setEnabled(false);
+			newTextField.setBackground(fieldPane.getBackground());
 			newTextField.addFocusListener(new FocusListener() {
 				@Override
 				public void focusGained(FocusEvent e) {
@@ -168,6 +171,13 @@ public class AddressDetailPanel extends JPanel {
 					// Do nothing
 				}
 			});
+			
+			if (key.equals("zip")) {
+				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[0-9\\-A-Za-z]"));
+			} else if (key.equals("phoneNumber")){
+				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[\\(\\)\\+0-9\\-\\s]"));
+			}
+			
 			fields.put(key, newTextField);
 			
 			JPanel panel = new JPanel();
@@ -176,13 +186,13 @@ public class AddressDetailPanel extends JPanel {
 			String fieldNameText = fieldName.containsKey(key) ? fieldName.get(key) : key;
 			JLabel fieldLabel = new JLabel(fieldNameText);
 			fieldLabel.setHorizontalAlignment(JLabel.TRAILING);
-			fieldLabel.setPreferredSize(new Dimension(100, 25));
+			fieldLabel.setPreferredSize(new Dimension(120, 25));
 			panel.add(fieldLabel);
 			panel.add(newTextField);
 			
-			panel.setPreferredSize(new Dimension(250, 40));
+			panel.setPreferredSize(new Dimension(300, 40));
 			panel.setMinimumSize(new Dimension(80, 40));
-			panel.setMaximumSize(new Dimension(350, 40));
+			panel.setMaximumSize(new Dimension(450, 40));
 			
 			fieldPane.add(panel);
 		}
@@ -289,6 +299,7 @@ public class AddressDetailPanel extends JPanel {
 			}
 		}
 		namePlate.setPlateName(firstName, lastName);
+		this.highlightWarningFields();
 	}
 	
 	@SuppressWarnings("rawtypes")

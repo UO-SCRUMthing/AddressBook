@@ -12,7 +12,10 @@ public abstract class Entry implements Comparable<Entry>{
 			if (!value.matches("^(\\d{4,5})(-\\d{4}|\\d{4}){0,1}$")) return false;
 			break;
 		case "phoneNumber":
-			if (!value.matches("^\\+{0,1}\\s*1{0,1}\\s*(\\d{3}|\\(\\d{3}\\))(?:-{0,1}|\\s*)*(\\d{3})(?:-{0,1}|\\s*)(\\d{4})$")) return false;
+			if (!value.matches("^\\+{0,1}\\s*1{0,1}\\s*(\\d{3}|\\(\\d{3}\\))(?:-{0,1}|\\s*)*(\\d{3})(?:-{0,1}|\\s*)(\\d{4})$")) {
+				if (!value.matches("^\\+\\s*(\\d+\\s*)*$"))
+					return false;
+			}
 			break;
 		case "email":
 			if (!value.matches("^.*@.*\\..+$")) return false;
