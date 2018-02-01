@@ -46,19 +46,6 @@ public class AddressBook extends EntryContainer<Entry> {
 		} 
 		return false;
 	}
-	
-	@Override
-	public Entry getEntry(int index) {
-		if (searchResults != null) {
-			return searchResults.get(index);
-		}
-		return sortedContactList.get(index);
-	}
-	
-	@Override
-	public int getSize() {
-		return sortedContactList.size();
-	}
 
 	@Override
 	public List<Entry> getAll() {
@@ -91,6 +78,24 @@ public class AddressBook extends EntryContainer<Entry> {
 	}
 
 	@Override
+	public void addEntry(Entry entry) {
+		sortedContactList.add(entry);
+	}
+
+	@Override
+	public Entry getEntry(int index) {
+		if (searchResults != null) {
+			return searchResults.get(index);
+		}
+		return sortedContactList.get(index);
+	}
+	
+	@Override
+	public int getSize() {
+		return sortedContactList.size();
+	}
+
+	@Override
 	public void deleteEntry(int index) {
 		deleteEntry(getEntry(index));
 	}
@@ -112,10 +117,5 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public boolean sort() {
 		return this.sortBy(sortedOn);
-	}
-
-	@Override
-	public void addEntry(Entry entry) {
-		sortedContactList.add(entry);
 	}
 }

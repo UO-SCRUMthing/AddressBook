@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-public abstract class Entry implements Comparable<Entry>{
+public abstract class Entry {
 	public static boolean FieldCheck(String field, String value) {
 		switch (field) {
 		case "zip":
@@ -49,6 +49,11 @@ public abstract class Entry implements Comparable<Entry>{
 	
 	@Override
 	public abstract String toString();
+	
+//	@Override
+//	public boolean equals(Entry other) {
+		
+//	}
 	
 	public static Comparator<Entry> compareLastName = (e1, e2) -> {		
 			
@@ -94,9 +99,13 @@ public abstract class Entry implements Comparable<Entry>{
     
     public abstract String getZip();
 
-	@Override
-	public int compareTo(Entry other) {
-		return this.getLastName().compareToIgnoreCase(other.getLastName());
+//	@Override
+//	public int compareTo(Entry other) {
+//		return this.getLastName().compareToIgnoreCase(other.getLastName());
+//	}
+	
+	public int detailCompare(Entry other) {
+		return this.toTabString().compareToIgnoreCase(other.toTabString());
 	}
 
 	public abstract String toTabString();
