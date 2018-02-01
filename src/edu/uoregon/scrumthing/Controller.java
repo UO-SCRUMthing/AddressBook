@@ -76,6 +76,6 @@ public abstract class Controller {
 	// file operations for models
 	public abstract int openAddressBook(String fileName);
 	public abstract boolean saveAddressBook(String fileName);
-	public abstract int importAddressBook(String fileName);
+	public abstract SimpleEntry<Integer, Integer> importAddressBook(String fileName);
 	public abstract boolean exportAddressBook(String fileName);
 }

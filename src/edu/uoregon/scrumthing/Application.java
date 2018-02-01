@@ -40,22 +40,21 @@ public class Application extends Controller {
 	public static ControllerPool appPool;
 	
 	public static void main(String[] args) {
-	    try {
-	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    }catch(Exception ex) {
-	        ex.printStackTrace();
-	    }
-	    
-	    // TODO: check recent file / empty name
-	    appPool = new ControllerPool();
-	    Application app = new Application(null);
-	    appPool.add(app);
-	    if (!app.loadLastAddressBook()) {
-    			app.closeAddressBook();
-    			app = (Application)app.createWindowForNewAddressBook();
-	    } else {
-	    	app.GUI.setVisible(true);
-	    }
+		try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		
+		appPool = new ControllerPool();
+		Application app = new Application(null);
+		appPool.add(app);
+		if (!app.loadLastAddressBook()) {
+				app.closeAddressBook();
+				app = (Application)app.createWindowForNewAddressBook();
+		} else {
+			app.GUI.setVisible(true);
+		}
 	}
 	
 	public Application(JFrame relative) {
@@ -72,11 +71,11 @@ public class Application extends Controller {
 		int result = -1;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(tempFilePath));
-		    String str = reader.readLine();
-		    if (str.trim() != null) {
-		    		result = openAddressBook(str);
-		    }
-		    reader.close();
+			String str = reader.readLine();
+			if (str.trim() != null) {
+					result = openAddressBook(str);
+			}
+			reader.close();
 		} catch (IOException e) {
 			return false;
 		}
@@ -88,13 +87,20 @@ public class Application extends Controller {
 	}
 	
 	private void saveLastAddressBook(File file) {
+		BufferedWriter writer = null;
 		try {
-			BufferedWriter writer = new BufferedWriter(new FileWriter(tempFilePath));
+			writer = new BufferedWriter(new FileWriter(tempFilePath));
 			writer.append(file.getAbsolutePath());	
-			writer.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			if (writer != null) {
+				try {
+					writer.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -108,25 +114,25 @@ public class Application extends Controller {
 		int successes = 0;
 		try {
 			reader = new BufferedReader(new FileReader(fileName));
-	        String str;
-	        str = reader.readLine(); // scrumthing file type check
-	        if (!str.contains("sthsabv")) successes = -2;
-	        
-	        str = reader.readLine(); // read address book name first
-	        setAddressBookName(str);
-	        
-	        while (successes >= 0 && (str = reader.readLine()) != null) {
-	        	Entry e = createEntryFromLine(str);
-	        	if (e != null) {
-	        		e.toTabString();
-	        		addressBook.addEntry(e);
-	        		successes++;
-	        	} else {
-	        		System.err.println("line parse failure");
-	        	}
-	        } 
-	        modified = false;
-	        filePath = fileName;
+			String str;
+			str = reader.readLine(); // scrumthing file type check
+			if (!str.contains("sthsabv")) successes = -2;
+			
+			str = reader.readLine(); // read address book name first
+			setAddressBookName(str);
+			
+			while (successes >= 0 && (str = reader.readLine()) != null) {
+				Entry e = createEntryFromLine(str);
+				if (e != null) {
+					e.toTabString();
+					addressBook.addEntry(e);
+					successes++;
+				} else {
+					System.err.println("line parse failure");
+				}
+			} 
+			modified = false;
+			filePath = fileName;
 		} catch (IOException e) {
 //			e.printStackTrace();
 			System.err.println("File '" + fileName + "' not found");
@@ -183,26 +189,27 @@ public class Application extends Controller {
 	}
 	
 	@Override
-	public int importAddressBook(String fileName) {
+	public SimpleEntry<Integer, Integer> importAddressBook(String fileName) {
 		File file = new File(fileName);
 		
 		BufferedReader reader = null;
 		int successes = 0;
+		int failures = 0;
 		try {
 			reader = new BufferedReader(new FileReader(fileName));
-	        String str;
-	        str = reader.readLine(); // skips header line 
-	        while ((str = reader.readLine()) != null) {
-	        	Entry e = createEntryFromLine(str);
-	        	if (e != null) {
-	        		e.toTabString();
-	        		addressBook.addEntry(e);
-	        		successes++;
-	        	} else {
-	        		System.err.println("line parse failure");
-	        	}
-	        } 
-	        modified = true;
+			String str;
+			str = reader.readLine(); // skips header line 
+			while ((str = reader.readLine()) != null) {
+				Entry e = createEntryFromLine(str);
+				if (e != null) {
+					e.toTabString();
+					addressBook.addEntry(e);
+					successes++;
+				} else {
+					System.err.println("line parse failure");
+				}
+			} 
+			modified = true;
 		} catch (IOException e) {
 //			e.printStackTrace();
 			System.err.println("File '" + fileName + "' not found");
@@ -225,7 +232,7 @@ public class Application extends Controller {
 		} else {
 			GUI.notice("Failed to import from file: " + file.getName(), 2);
 		}
-		return successes;
+		return new SimpleEntry<Integer, Integer>(successes, failures);
 	}
 
 	@Override
@@ -244,14 +251,12 @@ public class Application extends Controller {
 			writer.append(header + body);
 			success = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			GUI.notice("Failed to save file: " + e.getMessage(), 2);
 		} finally {
 			try {
 				writer.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -268,10 +273,10 @@ public class Application extends Controller {
 	public boolean closeAddressBook() {
 		if (modified) {
 			int n = JOptionPane.showConfirmDialog(
-				    GUI,
-				    "Do you want to save the address book?",
-				    this.getAddressBookName(),
-				    JOptionPane.YES_NO_CANCEL_OPTION);
+					GUI,
+					"Do you want to save the address book?",
+					this.getAddressBookName(),
+					JOptionPane.YES_NO_CANCEL_OPTION);
 			
 			switch (n) {
 			case JOptionPane.YES_OPTION:
@@ -312,7 +317,6 @@ public class Application extends Controller {
 	public void deleteEntry(int index) {
 		modified = true;
 		addressBook.deleteEntry(index);
-		// TODO: Undo
 		GUI.notice("Selected contact deleted", 0);
 	}
 
@@ -377,14 +381,12 @@ public class Application extends Controller {
 			writer.append(header + body);
 			success = true;
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			GUI.notice("Failed to export file: " + e.getMessage(), 2);
 		} finally {
 			try {
 				writer.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -419,24 +421,24 @@ public class Application extends Controller {
 		JFileChooser fileDiag = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
 		fileDiag.setFileFilter(filter);
-	    int returnVal = fileDiag.showOpenDialog(GUI);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    		// Open file and notice any failure
-	    		String filename = fileDiag.getSelectedFile().getAbsolutePath();
-	    		
-	    		Application newApp = new Application(GUI);
+		int returnVal = fileDiag.showOpenDialog(GUI);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+				// Open file and notice any failure
+				String filename = fileDiag.getSelectedFile().getAbsolutePath();
+				
+				Application newApp = new Application(GUI);
 
-	    		if (newApp.openAddressBook(filename) < 0) {
-	    			GUI.notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
-	    			newApp.GUI.dispose();
-	    			return null;
-	    		} else {
-	    			GUI.notice("New window opened.", 0);
-	       		newApp.GUI.setVisible(true);
-	    			appPool.add(newApp);
-	    			return newApp;
-	    		}
-	    }
+				if (newApp.openAddressBook(filename) < 0) {
+					GUI.notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
+					newApp.GUI.dispose();
+					return null;
+				} else {
+					GUI.notice("New window opened.", 0);
+				newApp.GUI.setVisible(true);
+					appPool.add(newApp);
+					return newApp;
+				}
+		}
 		return null;
 	}
 
@@ -446,13 +448,13 @@ public class Application extends Controller {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Address Book File (*."+SaveFileExtension+")", SaveFileExtension);
 		fileDiag.setFileFilter(filter);
 		fileDiag.setSelectedFile(new File(getAddressBookName() + "." + SaveFileExtension));
-	    int returnVal = fileDiag.showSaveDialog(GUI);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    		// Add a extension if there isn't one
-	    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
-	    	   	if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
-	    	   	return saveAddressBook(filename);
-	    }
+		int returnVal = fileDiag.showSaveDialog(GUI);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+			// Add a extension if there isn't one
+			String filename = fileDiag.getSelectedFile().getAbsolutePath();
+			if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
+			return saveAddressBook(filename);
+		}
 		return false;
 	}
 
@@ -469,13 +471,13 @@ public class Application extends Controller {
 	@Override
 	public boolean createRenameDialog() {
 		String newAddressBookName = (String)JOptionPane.showInputDialog(
-                GUI,
-                "Please enter a name",
-                "New Address Book",
-                JOptionPane.PLAIN_MESSAGE,
-                null,
-                null,
-                getAddressBookName());
+				GUI,
+				"Please enter a name",
+				"New Address Book",
+				JOptionPane.PLAIN_MESSAGE,
+				null,
+				null,
+				getAddressBookName());
 
 		if ((newAddressBookName != null) && (newAddressBookName.length() > 0)) {
 			setAddressBookName(newAddressBookName);
@@ -491,14 +493,14 @@ public class Application extends Controller {
 		JFileChooser fileDiag = new JFileChooser();
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Tab Separated Value File (*."+ImportFileExtension+")", ImportFileExtension);
 		fileDiag.setFileFilter(filter);
-	    int returnVal = fileDiag.showOpenDialog(GUI);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    		String filename = fileDiag.getSelectedFile().getAbsolutePath();
-	    	   	int result = importAddressBook(filename);
-	    	   	if (result > 0) {
-	    	   		return true;
-	    	   	}
-	    }
+		int returnVal = fileDiag.showOpenDialog(GUI);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+				String filename = fileDiag.getSelectedFile().getAbsolutePath();
+				SimpleEntry<Integer, Integer> result = importAddressBook(filename);
+				if (result.getKey() > 0) {
+					return true;
+				}
+		}
 		return false;
 	}
 
@@ -508,13 +510,13 @@ public class Application extends Controller {
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("Tab Separated Value File (*."+ImportFileExtension+")", ImportFileExtension);
 		fileDiag.setFileFilter(filter);
 		fileDiag.setSelectedFile(new File(getAddressBookName() + "." + ImportFileExtension));
-	    int returnVal = fileDiag.showSaveDialog(GUI);
-	    if(returnVal == JFileChooser.APPROVE_OPTION) {
-	    		// Add a extension if there isn't one
-	    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
-	    	   	if (!filename .endsWith("."+ImportFileExtension)) filename += "."+ImportFileExtension;
-	    	   	return exportAddressBook(filename);
-	    }
+		int returnVal = fileDiag.showSaveDialog(GUI);
+		if(returnVal == JFileChooser.APPROVE_OPTION) {
+				// Add a extension if there isn't one
+				String filename = fileDiag.getSelectedFile().getAbsolutePath();
+				if (!filename .endsWith("."+ImportFileExtension)) filename += "."+ImportFileExtension;
+				return exportAddressBook(filename);
+		}
 		return false;
 	}
 
