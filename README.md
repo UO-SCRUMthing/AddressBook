@@ -15,7 +15,7 @@ This Java project follows the MVC control pattern. The root directory for source
 
 Each file has a corresponding abstract class file that it extends. All data structures are implemented in a modular generic way so that the AddressBook, Contact, and Application classes can be changed independently or substituted out entirely.  
 
-#### Backend Files
+### Backend Files
 
 __Application.java__ extends Controller.java and is the main controller that coordinates requests for data from the model. It also handles requests from the GUI such as saving, loading, and importing. 
 
@@ -25,7 +25,7 @@ __Contact.java__ extends Entry.java and defines methods that work on an individu
 
 __ControllerPool.java__ implements and iterable collection of applications so that the user can have multiple address books open at the same time. 
 
-#### GUI Files
+### GUI Files
 
 __AddressBookGUI.java__ is the main GUI class file that manages creating menus, displaying contacts, interpreting user input. 
 
