@@ -26,6 +26,8 @@ public class Application extends Controller {
 	
 	EntryContainer<Entry> addressBook; 
 	AddressBookGUI GUI;
+	Entry selectedItem;
+	int selectedIndex;
 	
 	private String filePath;
 	private static List<String> parsingFields = Arrays.asList("city", "state", "zip", "address1", "address2", "lastName", "firstName", "phoneNumber", "email");
@@ -297,6 +299,7 @@ public class Application extends Controller {
 	public void addNewEntry(Entry newEntry) {
 		modified = true;
 		addressBook.addEntry(newEntry);
+		selectedItem = newEntry;
 		GUI.notice("New contact added", 0);
 		addressBook.sort();
 	}
@@ -306,6 +309,7 @@ public class Application extends Controller {
 		modified = true;
 		addressBook.getEntry(index).updateDetails(details);
 		GUI.notice("Contact updated", 0);
+		addressBook.sort();
 	}
 
 	@Override
@@ -318,17 +322,23 @@ public class Application extends Controller {
 
 	@Override
 	public List<SimpleEntry<String, String>> itemSelected(int index) {
-		return addressBook.getEntry(index).getDetailList();
+		selectedIndex = index;
+		selectedItem = addressBook.getEntry(index);
+		return selectedItem.getDetailList();
 	}
 
 	@Override
 	public List<Entry> getEntryList() {
-		return addressBook.getAll();
+		List<Entry> all = addressBook.getAll();
+		selectedIndex = all.indexOf(selectedItem);
+		return all;
 	}
 	
 	@Override 
 	public List<Entry> getEntryList(String searchTerm) {
-		return addressBook.getAll(searchTerm);
+		List<Entry> all = addressBook.getAll(searchTerm);
+		selectedIndex = all.indexOf(selectedItem);
+		return all;
 	}
 
 	@Override
@@ -510,5 +520,10 @@ public class Application extends Controller {
 	    	   	return exportAddressBook(filename);
 	    }
 		return false;
+	}
+
+	@Override
+	public int getSelectedIndex() {
+		return selectedIndex;
 	}
 }
