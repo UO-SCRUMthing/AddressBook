@@ -145,8 +145,8 @@ public class AddressBookGUI extends JFrame {
 			});
 			
 			JMenuItem itemImport = new JMenuItem("Import...");
-			itemSaveAs.setMnemonic(KeyEvent.VK_I);
-			itemSaveAs.addActionListener(new ActionListener() {
+			itemImport.setMnemonic(KeyEvent.VK_I);
+			itemImport.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					controller.createImportDialog();
@@ -154,8 +154,8 @@ public class AddressBookGUI extends JFrame {
 			});
 			
 			JMenuItem itemExport = new JMenuItem("Export...");
-			itemSaveAs.setMnemonic(KeyEvent.VK_E);
-			itemSaveAs.addActionListener(new ActionListener() {
+			itemExport.setMnemonic(KeyEvent.VK_E);
+			itemExport.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					controller.createExportDialog();
@@ -476,7 +476,6 @@ public class AddressBookGUI extends JFrame {
 		}
 		status.revalidate();
 		status.repaint();
-		
 	}
 	
 	public void setNoSorting() {

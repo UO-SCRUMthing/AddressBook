@@ -20,6 +20,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
@@ -28,6 +29,18 @@ import edu.uoregon.scrumthing.Entry;
 public class AddressDetailPanel extends JPanel {
 	private static final long serialVersionUID = -7042296921092780861L;
 	private static final int NEW = -1;
+	private static final HashMap<String, String> fieldName = new HashMap<>();
+	static {
+		fieldName.put("city", "City");
+		fieldName.put("state", "State");
+		fieldName.put("zip", "ZIP Code");
+		fieldName.put("address1", "Address");
+		fieldName.put("address2", "       ");
+		fieldName.put("lastName", "Last Name");
+		fieldName.put("firstName", "First Name");
+		fieldName.put("phoneNumber", "Phone Number");
+		fieldName.put("email", "E-mail");
+	}
 	
 	private AddressBookGUI gui;
 	private List<SimpleEntry<String, String>> details;
@@ -81,6 +94,26 @@ public class AddressDetailPanel extends JPanel {
 		confirmButton.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				if (namePlate.getFirstName().isEmpty() && namePlate.getLastName().isEmpty()) {
+					gui.notice("Please provide a name for this contact.", 1);
+					return;
+				}
+				
+				if (!TrimFieldAndCheckRequirements()) {
+					gui.notice("Please provide the whole name or at least one field of information for this contact.", 1);
+					return;
+				}
+				if (!highlightWarningFields().isEmpty()) {
+					int n = JOptionPane.showConfirmDialog(
+						    gui,
+						    "There is at least one field which does not meet U.S. Postal standards. Would you like to proceed?",
+						    gui.controller.getAddressBookName(),
+						    JOptionPane.YES_NO_OPTION);
+					
+					if (n == JOptionPane.NO_OPTION) {
+						return;
+					}
+				}
 				saveChange();
 			}
 		});
@@ -140,12 +173,16 @@ public class AddressDetailPanel extends JPanel {
 			JPanel panel = new JPanel();
 			panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
 			
-			panel.add(new JLabel(key));
+			String fieldNameText = fieldName.containsKey(key) ? fieldName.get(key) : key;
+			JLabel fieldLabel = new JLabel(fieldNameText);
+			fieldLabel.setHorizontalAlignment(JLabel.TRAILING);
+			fieldLabel.setPreferredSize(new Dimension(100, 25));
+			panel.add(fieldLabel);
 			panel.add(newTextField);
 			
-			panel.setPreferredSize(new Dimension(200, 40));
+			panel.setPreferredSize(new Dimension(250, 40));
 			panel.setMinimumSize(new Dimension(80, 40));
-			panel.setMaximumSize(new Dimension(300, 40));
+			panel.setMaximumSize(new Dimension(350, 40));
 			
 			fieldPane.add(panel);
 		}
@@ -262,13 +299,34 @@ public class AddressDetailPanel extends JPanel {
 	}
 	
 	@SuppressWarnings("rawtypes")
-	public List<String> highlightWarningFields() {
+	private boolean TrimFieldAndCheckRequirements() {
+		String firstName = namePlate.getFirstName().trim();
+		String lastName = namePlate.getLastName().trim();
+		boolean valid = false;
+		if (!firstName.isEmpty() && !lastName.isEmpty()) {
+			valid = true;
+		}
+		namePlate.setPlateName(firstName, lastName);
+		
+	    Iterator it = fields.entrySet().iterator();
+	    while (it.hasNext()) {
+	        Map.Entry pair = (Map.Entry)it.next();
+	        JTextField field = (JTextField)pair.getValue();
+	        String fieldText = field.getText().trim();
+			field.setText(fieldText);
+			if ((!firstName.isEmpty() || !lastName.isEmpty()) && !fieldText.isEmpty()) valid = true;
+	    }
+	    return valid;
+	}
+	
+	@SuppressWarnings("rawtypes")
+	private List<String> highlightWarningFields() {
 		ArrayList<String> warningFields = new ArrayList<String>();
 	    Iterator it = fields.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry pair = (Map.Entry)it.next();
 	        JTextField field = (JTextField)pair.getValue();
-			if (!Entry.FieldCheck((String)pair.getKey(), field.getText())) {
+			if (field.getText().length() > 0 && !Entry.FieldCheck((String)pair.getKey(), field.getText())) {
 				warningFields.add((String)pair.getKey());
 				field.setBackground(Color.yellow);
 			}

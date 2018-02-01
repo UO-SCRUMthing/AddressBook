@@ -73,16 +73,19 @@ public class Application extends Controller {
 	}
 	
 	private boolean loadLastAddressBook() {
+		int result = -1;
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(tempFilePath));
 		    String str = reader.readLine();
 		    if (str != null) {
-		    	importAddressBook(str);	
+		    		result = openAddressBook(str);
 		    }
 		    reader.close();
 		} catch (IOException e) {
 			return false;
 		}
+		
+		if (result < 0) return false;
 		return true;
 
 	}
@@ -100,21 +103,57 @@ public class Application extends Controller {
 
 	public int openAddressBook(String fileName) {
 		File file = new File(fileName);
-		// creates new AddressBook to dump data into
-		int successes = -1;
-		if (!modified) {
-			addressBook = new AddressBook();
-			successes = this.importAddressBook(fileName);
-		} else {
-			// warn user this will wipe all their unsaved data
-			addressBook = new AddressBook();
-			successes = this.importAddressBook(fileName);
+		
+		// create a new one just to be sure not to use any old one
+		addressBook = new AddressBook();
+		
+		BufferedReader reader = null;
+		int successes = 0;
+		try {
+			reader = new BufferedReader(new FileReader(fileName));
+	        String str;
+	        str = reader.readLine(); // scrumthing file type check
+	        if (!str.contains("sthsabv")) successes = -2;
+	        
+	        str = reader.readLine(); // read address book name first
+	        setAddressBookName(str);
+	        
+	        while (successes >= 0 && (str = reader.readLine()) != null) {
+	        	Entry e = createEntryFromLine(str);
+	        	if (e != null) {
+	        		e.toTabString();
+	        		addressBook.addEntry(e);
+	        		successes++;
+	        	} else {
+	        		System.err.println("line parse failure");
+	        	}
+	        } 
+	        modified = false;
+	        filePath = fileName;
+		} catch (IOException e) {
+//			e.printStackTrace();
+			System.err.println("File '" + fileName + "' not found");
+			successes = -1;
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+		addressBook.sort();
+		GUI.updateList();
+
 		if (successes >= 0) {
 			GUI.notice("Opened file: " + file.getName(), 0);
 		}
+		else {
+			GUI.notice("Failed to open file: " + file.getName(), 2);
+		}
 		
-		saveLastAddressBook(file);
+		//saveLastAddressBook(file);
 		return successes;
 	}
 	
@@ -148,6 +187,8 @@ public class Application extends Controller {
 	
 	@Override
 	public int importAddressBook(String fileName) {
+		File file = new File(fileName);
+		
 		BufferedReader reader = null;
 		int successes = 0;
 		try {
@@ -165,7 +206,6 @@ public class Application extends Controller {
 	        	}
 	        } 
 	        modified = true;
-	        filePath = fileName;
 		} catch (IOException e) {
 //			e.printStackTrace();
 			System.err.println("File '" + fileName + "' not found");
@@ -179,8 +219,15 @@ public class Application extends Controller {
 				e.printStackTrace();
 			}
 		}
+		
 		addressBook.sort();
 		GUI.updateList();
+		
+		if (successes > 0) {
+			GUI.notice("Imported from file: " + file.getName(), 0);
+		} else {
+			GUI.notice("Failed to import from file: " + file.getName(), 2);
+		}
 		return successes;
 	}
 
@@ -193,10 +240,7 @@ public class Application extends Controller {
 		boolean success = false;
 		try {
 			writer = new BufferedWriter(new FileWriter(file));
-			for (String fieldName : parsingFields) {
-				header += fieldName.toUpperCase() + "\t";
-			}
-			header += "\n";
+			header = "sthsabv1\n"+getAddressBookName()+"\n";
 			for (Entry contact : addressBook.getAll()) {
 				body += contact.toTabString() + "\n";
 			}
@@ -311,7 +355,38 @@ public class Application extends Controller {
 	
 	@Override
 	public boolean exportAddressBook(String fileName) {
-		// TODO Auto-generated method stub
+		File file = new File(fileName);
+		BufferedWriter writer = null;
+		String header = "";
+		String body = "";
+		boolean success = false;
+		try {
+			writer = new BufferedWriter(new FileWriter(file));
+			for (String fieldName : parsingFields) {
+				header += fieldName.toUpperCase() + "\t";
+			}
+			header += "\n";
+			for (Entry contact : addressBook.getAll()) {
+				body += contact.toTabString() + "\n";
+			}
+			writer.append(header + body);
+			success = true;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			GUI.notice("Failed to export file: " + e.getMessage(), 2);
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		if (success) {
+			GUI.notice("Exported file: " + file.getName(), 0);
+		}
+		
 		return false;
 	}
 
@@ -346,13 +421,13 @@ public class Application extends Controller {
 	    		
 	    		Application newApp = new Application(GUI);
 
-	    		if (openAddressBook(filename) < 0) {
+	    		if (newApp.openAddressBook(filename) < 0) {
 	    			GUI.notice("Failed to open file: " + fileDiag.getSelectedFile().getName(), 2);
 	    			newApp.GUI.dispose();
 	    			return null;
 	    		} else {
 	    			GUI.notice("New window opened.", 0);
-	       			newApp.GUI.setVisible(true);
+	       		newApp.GUI.setVisible(true);
 	    			appPool.add(newApp);
 	    			return newApp;
 	    		}
@@ -408,13 +483,33 @@ public class Application extends Controller {
 
 	@Override
 	public boolean createImportDialog() {
-		// TODO Auto-generated method stub
+		JFileChooser fileDiag = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Tab Separated Value File (*."+ImportFileExtension+")", ImportFileExtension);
+		fileDiag.setFileFilter(filter);
+	    int returnVal = fileDiag.showOpenDialog(GUI);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    		String filename = fileDiag.getSelectedFile().getAbsolutePath();
+	    	   	int result = importAddressBook(filename);
+	    	   	if (result > 0) {
+	    	   		return true;
+	    	   	}
+	    }
 		return false;
 	}
 
 	@Override
 	public boolean createExportDialog() {
-		// TODO Auto-generated method stub
+		JFileChooser fileDiag = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("Tab Separated Value File (*."+ImportFileExtension+")", ImportFileExtension);
+		fileDiag.setFileFilter(filter);
+		fileDiag.setSelectedFile(new File(getAddressBookName() + "." + ImportFileExtension));
+	    int returnVal = fileDiag.showSaveDialog(GUI);
+	    if(returnVal == JFileChooser.APPROVE_OPTION) {
+	    		// Add a extension if there isn't one
+	    	   	String filename = fileDiag.getSelectedFile().getAbsolutePath();
+	    	   	if (!filename .endsWith("."+ImportFileExtension)) filename += "."+ImportFileExtension;
+	    	   	return exportAddressBook(filename);
+	    }
 		return false;
 	}
 }
