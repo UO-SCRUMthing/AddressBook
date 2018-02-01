@@ -27,8 +27,10 @@ __ControllerPool.java__ implements and iterable collection of applications so th
 
 ### GUI Files
 
-__AddressBookGUI.java__ is the main GUI class file that manages creating menus, displaying contacts, interpreting user input. 
+__AddressBookGUI.java__ is the main GUI class that manages creating menus, populating lists, displaying contacts, interpreting user input. 
 
 __AddressDetailPanel.java__ is the class the manages displaying the actual contact information and being able to edit each contact on the fly. 
 
-__NamePlatePanel.java__ manages the name plate above above the detail panel when displaying a contact. 
+__NamePlatePanel.java__ manages the name plate above the detail panel when displaying a contact and being able to be edited when needed. 
+
+__RegexDocumentFilter.java__ is a custom document filter that restrict user input using regex which is currently being used for ZIP code and Phone Number fields.
