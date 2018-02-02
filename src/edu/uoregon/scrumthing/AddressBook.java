@@ -1,8 +1,8 @@
 package edu.uoregon.scrumthing;
 
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class AddressBook extends EntryContainer<Entry> {
 	private List<Entry> sortedContactList = new ArrayList<Entry>();

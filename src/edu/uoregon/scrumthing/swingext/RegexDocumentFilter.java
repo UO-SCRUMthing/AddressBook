@@ -1,7 +1,6 @@
 package edu.uoregon.scrumthing.swingext;
 
 import java.awt.Toolkit;
-import java.util.regex.Pattern;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

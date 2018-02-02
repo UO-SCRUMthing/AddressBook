@@ -1,8 +1,5 @@
 package edu.uoregon.scrumthing;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public abstract class EntryContainer<T extends Entry> {
@@ -41,7 +38,7 @@ public abstract class EntryContainer<T extends Entry> {
 	 */
 	public abstract int getSize();
 
-	/**
+	/**		
 	 * Add an entry to the container.
 	 * @param <K>
 	 * 

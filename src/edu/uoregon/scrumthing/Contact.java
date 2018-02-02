@@ -47,13 +47,7 @@ public class Contact extends Entry {
                 detailList.get(2).getValue() + "\t" + detailList.get(3).getValue() + "\t" + detailList.get(1).getValue() + "\t" + 
                 detailList.get(0).getValue() + "\t" + detailList.get(8).getValue() + "\t" + detailList.get(7).getValue();
     }
-    
-    public void addUserFields(ArrayList<SimpleEntry<String, String>> userFields) {
-        for (SimpleEntry<String, String> field : userFields) {
-            allFieldNames.add(field.getKey());
-        }
-    }
-    
+
     @Override
     public String getLastName() {
         return detailList.get(1).getValue();

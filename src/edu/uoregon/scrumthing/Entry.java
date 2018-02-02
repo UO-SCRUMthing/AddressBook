@@ -8,6 +8,9 @@ import java.util.List;
 public abstract class Entry {
 	public static boolean FieldCheck(String field, String value) {
 		switch (field) {
+		case "address1":
+			if (!value.matches("^([\\d\\.-]+)\\s*(.*\\w+.*)+$")) return false;
+			break;
 		case "zip":
 			if (!value.matches("^(\\d{4,5})(-\\d{4}|\\d{4}){0,1}$")) return false;
 			break;

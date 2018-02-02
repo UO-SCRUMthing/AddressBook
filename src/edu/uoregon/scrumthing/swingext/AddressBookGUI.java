@@ -212,6 +212,7 @@ public class AddressBookGUI extends JFrame {
 			itemAddContact = new JMenuItem("Add a contact");
 			itemAddContact.setMnemonic(KeyEvent.VK_A);
 			itemAddContact.addActionListener(addContactAction);
+			disableComponents.add(itemAddContact);
 			
 			JMenuItem itemRenameAddressBook = new JMenuItem("Rename address book");
 			itemRenameAddressBook.setMnemonic(KeyEvent.VK_R);
