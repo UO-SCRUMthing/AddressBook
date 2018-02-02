@@ -31,15 +31,17 @@ public class AddressBook extends EntryContainer<Entry> {
 	@Override
 	public boolean sortBy(String field) {
 		if (field == "name") {
-			if (searchResults != null)
+			if (searchResults != null) {
 				Collections.sort(searchResults, Entry.compareName);
+			}				
 			Collections.sort(sortedContactList, Entry.compareName);
 			sortedOn = field;
 			return true;
 			
 		} else if (field == "zip") {
-			if (searchResults != null)
-				Collections.sort(searchResults, Entry.compareName);
+			if (searchResults != null) {
+				Collections.sort(searchResults, Entry.compareName);	
+			}				
 			Collections.sort(sortedContactList, Entry.compareZip); 
 			sortedOn = field;	
 			return true;

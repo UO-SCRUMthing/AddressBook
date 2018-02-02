@@ -92,7 +92,7 @@ public class Application extends Controller {
 			BufferedReader reader = new BufferedReader(new FileReader(tempFilePath));
 			String str = reader.readLine();
 			if (str.trim() != null) {
-					result = openAddressBook(str);
+				result = openAddressBook(str);
 			}
 			reader.close();
 		} catch (IOException e) {
@@ -121,61 +121,6 @@ public class Application extends Controller {
 				}
 			}
 		}
-	}
-
-	public int openAddressBook(String fileName) {
-		File file = new File(fileName);
-		
-		// create a new one just to be sure not to use any old one
-		addressBook = new AddressBook();
-		
-		BufferedReader reader = null;
-		int successes = 0;
-		try {
-			reader = new BufferedReader(new FileReader(fileName));
-			String str;
-			str = reader.readLine(); // scrumthing file type check
-			if (!str.contains("sthsabv")) successes = -2;
-			
-			str = reader.readLine(); // read address book name first
-			setAddressBookName(str);
-			
-			while (successes >= 0 && (str = reader.readLine()) != null) {
-				Entry e = createEntryFromLine(str);
-				if (e != null) {
-					e.toTabString();
-					addressBook.addEntry(e);
-					successes++;
-				} else {
-					System.err.println("line parse failure");
-				}
-			} 
-			modified = false;
-			filePath = fileName;
-		} catch (IOException e) {
-//			e.printStackTrace();
-			System.err.println("File '" + fileName + "' not found");
-			successes = -1;
-		} finally {
-			try {
-				if (reader != null) {
-					reader.close();
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		addressBook.sort();
-		GUI.updateList();
-
-		if (successes >= 0) {
-			GUI.notice("Opened file: " + file.getName(), 0);
-		}
-		else {
-			GUI.notice("Failed to open file: " + file.getName(), 2);
-		}
-		
-		return successes;
 	}
 	
 	private Entry createEntryFromLine(String line) {
@@ -253,6 +198,71 @@ public class Application extends Controller {
 			GUI.notice("Failed to import from file: " + file.getName(), 2);
 		}
 		return new SimpleEntry<Integer, Integer>(successes, failures);
+	}
+	
+	public int openAddressBook(String fileName) {
+		File file = new File(fileName);
+		
+		// create a new one just to be sure not to use any old one
+		addressBook = new AddressBook();
+		
+		BufferedReader reader = null;
+		int successes = 0;
+		try {
+			reader = new BufferedReader(new FileReader(fileName));
+			String str;
+			str = reader.readLine(); // scrumthing file type check
+			if (!str.contains("sthsabv")) successes = -2;
+			
+			str = reader.readLine(); // read address book name first
+			setAddressBookName(str);
+			
+			while (successes >= 0 && (str = reader.readLine()) != null) {
+				Entry e = createEntryFromLine(str);
+				if (e != null) {
+					e.toTabString();
+					addressBook.addEntry(e);
+					successes++;
+				} else {
+					System.err.println("line parse failure");
+				}
+			} 
+			modified = false;
+			filePath = fileName;
+		} catch (IOException e) {
+//			e.printStackTrace();
+			System.err.println("File '" + fileName + "' not found");
+			successes = -1;
+		} finally {
+			try {
+				if (reader != null) {
+					reader.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		addressBook.sort();
+		GUI.updateList();
+
+		if (successes >= 0) {
+			GUI.notice("Opened file: " + file.getName(), 0);
+		}
+		else {
+			GUI.notice("Failed to open file: " + file.getName(), 2);
+		}
+		
+		return successes;
+	}
+	
+	@Override
+	public boolean saveCurrentAddressBook() {
+		if (filePath == null || filePath.trim().length() <= 0) {
+			return createSaveDialog();
+		}
+		else {
+			return saveAddressBook(filePath);
+		}
 	}
 	
 	private void writeContactsToFile(BufferedWriter writer) throws IOException {
@@ -495,16 +505,6 @@ public class Application extends Controller {
 			GUI.notice("User canceled the operation.", 0);
 		}
 		return false;
-	}
-
-	@Override
-	public boolean saveCurrentAddressBook() {
-		if (filePath == null || filePath.length() <= 0) {
-			return createSaveDialog();
-		}
-		else {
-			return saveAddressBook(filePath);
-		}
 	}
 
 	@Override
