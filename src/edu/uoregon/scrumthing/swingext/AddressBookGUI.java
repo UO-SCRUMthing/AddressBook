@@ -11,8 +11,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -85,6 +87,13 @@ public class AddressBookGUI extends JFrame {
 	// TODO: need controller
 	public AddressBookGUI(JFrame relative, Controller controller) {
 		super(controller.getAddressBookName());
+		try {
+			this.setIconImage(
+				ImageIO.read(getClass().getClassLoader().getResource("icon16.png"))
+			);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 		// this.data = data;
 		this.disableComponents = new ArrayList<JComponent>();
 		this.editing = false;
