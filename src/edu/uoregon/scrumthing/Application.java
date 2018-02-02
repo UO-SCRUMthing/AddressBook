@@ -205,6 +205,7 @@ public class Application extends Controller {
 					addressBook.addEntry(e);
 					successes++;
 				} else {
+					failures++;
 					System.err.println("line parse failure");
 				}
 			} 
@@ -227,7 +228,8 @@ public class Application extends Controller {
 		GUI.updateList();
 		
 		if (successes > 0) {
-			GUI.notice("Imported from file: " + file.getName(), 0);
+			int total = successes + failures;
+			GUI.notice(Integer.toString(successes)+ " out of " + Integer.toString(total) +" contacts successfully imported from file: " + file.getName(), 0);
 		} else {
 			GUI.notice("Failed to import from file: " + file.getName(), 2);
 		}

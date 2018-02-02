@@ -107,7 +107,9 @@ public class AddressDetailPanel extends JPanel {
 				if (!highlightWarningFields().isEmpty()) {
 					int n = JOptionPane.showConfirmDialog(
 							namePlate,
-						    "There is at least one field which does not meet U.S. Postal standards. Would you like to proceed?",
+						    "One or more fields contains non-standard input. Would you like to proceed?\r\n" + 
+						    "\r\n" + 
+						    "See the User Guide for details about input standards.",
 						    gui.controller.getAddressBookName(),
 						    JOptionPane.YES_NO_OPTION);
 					
