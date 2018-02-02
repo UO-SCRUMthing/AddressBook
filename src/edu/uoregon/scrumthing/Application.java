@@ -254,26 +254,30 @@ public class Application extends Controller {
 		}
 		return new SimpleEntry<Integer, Integer>(successes, failures);
 	}
+	
+	private void writeContactsToFile(BufferedWriter writer) throws IOException {
+		String body;
+		for (Entry contact : addressBook.getAll()) {
+			body = contact.toTabString() + "\n";
+			writer.append(body);
+		}
+	}
 
 	@Override
 	public boolean saveAddressBook(String filePath) {
 		File file = new File(filePath);
 		BufferedWriter writer = null;
 		String header = "";
-		String body = "";
 		boolean success = false;
 		try {
 			writer = new BufferedWriter(new FileWriter(file));
 			writer.append("");
 			writer.close();
 			writer = new BufferedWriter(new FileWriter(file, true));
-			header = "sthsabv1\n"+getAddressBookName()+"\n";
+			header = "sthsabv1\n" + getAddressBookName( )+ "\n";
 			writer.append(header);
-			for (Entry contact : addressBook.getAll()) {
-				body = contact.toTabString() + "\n";
-				System.out.println(body);
-				writer.append(body);
-			}
+			
+			writeContactsToFile(writer);
 			success = true;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -291,6 +295,42 @@ public class Application extends Controller {
 			GUI.notice("Saved file: " + file.getName(), 0);
 		}
 		return success;
+	}
+	
+	@Override
+	public boolean exportAddressBook(String fileName) {
+		File file = new File(fileName);
+		BufferedWriter writer = null;
+		String header = "";
+		boolean success = false;
+		try {
+			writer = new BufferedWriter(new FileWriter(file));
+			writer.append("");
+			writer.close();
+			writer = new BufferedWriter(new FileWriter(file, true));
+			for (String fieldName : parsingFields) {
+				header += fieldName.toUpperCase() + "\t";
+			}
+			header += "\n";
+			writer.append(header);
+			
+			writeContactsToFile(writer);
+			success = true;
+		} catch (IOException e) {
+			e.printStackTrace();
+			GUI.notice("Failed to export file: " + e.getMessage(), 2);
+		} finally {
+			try {
+				writer.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		if (success) {
+			GUI.notice("Exported file: " + file.getName(), 0);
+		}
+		
+		return false;
 	}
 
 	@Override
@@ -388,41 +428,6 @@ public class Application extends Controller {
 	@Override
 	public void closeAllAddressBook() {
 		appPool.closeAll();
-	}
-	
-	@Override
-	public boolean exportAddressBook(String fileName) {
-		File file = new File(fileName);
-		BufferedWriter writer = null;
-		String header = "";
-		String body = "";
-		boolean success = false;
-		try {
-			writer = new BufferedWriter(new FileWriter(file));
-			for (String fieldName : parsingFields) {
-				header += fieldName.toUpperCase() + "\t";
-			}
-			header += "\n";
-			for (Entry contact : addressBook.getAll()) {
-				body += contact.toTabString() + "\n";
-			}
-			writer.append(header + body);
-			success = true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			GUI.notice("Failed to export file: " + e.getMessage(), 2);
-		} finally {
-			try {
-				writer.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		if (success) {
-			GUI.notice("Exported file: " + file.getName(), 0);
-		}
-		
-		return false;
 	}
 
 	@Override
