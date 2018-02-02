@@ -175,9 +175,11 @@ public class AddressDetailPanel extends JPanel {
 			});
 			
 			if (key.equals("zip")) {
-				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[0-9\\-A-Za-z]"));
+				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[0-9\\-A-Za-z]*"));
 			} else if (key.equals("phoneNumber")){
-				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[\\(\\)\\+0-9\\-\\s]"));
+				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[\\(\\)\\+0-9\\- ]*"));
+			} else {
+				((AbstractDocument)newTextField.getDocument()).setDocumentFilter(new RegexDocumentFilter("[^\\t]*"));
 			}
 			
 			fields.put(key, newTextField);

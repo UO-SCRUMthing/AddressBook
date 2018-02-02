@@ -20,11 +20,12 @@ public class RegexDocumentFilter extends DocumentFilter {
 
         String text = fb.getDocument().getText(0,
                 fb.getDocument().getLength());
+        if (str == null || str.isEmpty()) return;
         text += str;
         if (str.matches(pattern)) {   //  "^[0-9]+[.]?[0-9]{0,}$"
             super.replace(fb, offs, length, str, a);
         } else {
-            Toolkit.getDefaultToolkit().beep();
+        	Toolkit.getDefaultToolkit().beep();
         }
 
     }
@@ -35,11 +36,12 @@ public class RegexDocumentFilter extends DocumentFilter {
 
         String text = fb.getDocument().getText(0,
                 fb.getDocument().getLength());
+        if (str == null || str.isEmpty()) return;
         text += str;
         if (str.matches(pattern)) {
             super.insertString(fb, offs, str, a);
         } else {
-            Toolkit.getDefaultToolkit().beep();
+        	Toolkit.getDefaultToolkit().beep();
         }
     }
 }
