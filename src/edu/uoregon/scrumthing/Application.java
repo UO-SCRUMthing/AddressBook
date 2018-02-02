@@ -156,7 +156,6 @@ public class Application extends Controller {
 			GUI.notice("Failed to open file: " + file.getName(), 2);
 		}
 		
-		//saveLastAddressBook(file);
 		return successes;
 	}
 	
@@ -251,6 +250,7 @@ public class Application extends Controller {
 			writer.append(header);
 			for (Entry contact : addressBook.getAll()) {
 				body = contact.toTabString() + "\n";
+				System.out.println(body);
 				writer.append(body);
 			}
 			success = true;
