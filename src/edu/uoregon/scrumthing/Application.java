@@ -50,8 +50,27 @@ public class Application extends Controller {
 		Application app = new Application(null);
 		appPool.add(app);
 		if (!app.loadLastAddressBook()) {
-				app.closeAddressBook();
-				app = (Application)app.createWindowForNewAddressBook();
+				Object[] options = {"Create a new address book",
+		                "Open a existing address book",
+		                "Quit"};
+				int n = JOptionPane.showOptionDialog(null, "What would you like to do?",
+					    "SCRUMthing Address Book",
+					    JOptionPane.YES_NO_CANCEL_OPTION,
+					    JOptionPane.QUESTION_MESSAGE,
+					    null,
+					    options,
+					    options[0]);
+				if (n == JOptionPane.YES_OPTION) {
+					app.createWindowForNewAddressBook();
+					app.closeAddressBook();
+				} else if (n == JOptionPane.NO_OPTION) {
+					Controller newApp = app.createWindowForExistingAddressBook();
+					if (newApp == null) {
+						app.modified = true;
+						app.GUI.setVisible(true);
+					}
+				}
+				
 		} else {
 			app.GUI.setVisible(true);
 		}
@@ -270,7 +289,6 @@ public class Application extends Controller {
 			modified = false;
 			this.filePath = filePath;
 			GUI.notice("Saved file: " + file.getName(), 0);
-			saveLastAddressBook(file);
 		}
 		return success;
 	}
@@ -292,6 +310,10 @@ public class Application extends Controller {
 					return false;
 				}
 		}
+
+		if (filePath != null && !filePath.isEmpty())
+			saveLastAddressBook(new File(filePath));
+		
 		GUI.dispose();
 		node.removeSelf();
 		return true;
@@ -445,6 +467,9 @@ public class Application extends Controller {
 					return newApp;
 				}
 		}
+		else if (returnVal == JFileChooser.CANCEL_OPTION) {
+			GUI.notice("User canceled the operation.", 0);
+		}
 		return null;
 	}
 
@@ -460,6 +485,9 @@ public class Application extends Controller {
 			String filename = fileDiag.getSelectedFile().getAbsolutePath();
 			if (!filename .endsWith("."+SaveFileExtension)) filename += "."+SaveFileExtension;
 			return saveAddressBook(filename);
+		}
+		else if (returnVal == JFileChooser.CANCEL_OPTION) {
+			GUI.notice("User canceled the operation.", 0);
 		}
 		return false;
 	}
