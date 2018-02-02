@@ -7,11 +7,11 @@ AddressBookRunnable.jar is the current build of the address book in cross-platfo
 
 This Java project follows the MVC control pattern. The root directory for source files is src/edu/uoregon/scrumthing. The project is broken up into 3 main directories that hold the source files for the GUI, tests, and the controller and backend. 
 
-/swingext holds all the classes that extend swing classes to make up the GUI. 
+__/swingext__ holds all the classes that extend swing classes to make up the GUI. 
 
-/test (as you can imagine) is where all of the test files are. 
+__/test__ (as you can imagine) is where all of the test files are. 
 
-/ is where all the backend source files are. The 3 main files are Application.java, AddressBook.java, and Contact.java. These are, as the names suggest, the main application file and the 2 model files. 
+__/__ is where all the backend source files are. The 3 main files are Application.java, AddressBook.java, and Contact.java. These are, as the names suggest, the main application file and the 2 model files. 
 
 Each file has a corresponding abstract class file that it extends. All data structures are implemented in a modular generic way so that the AddressBook, Contact, and Application classes can be changed independently or substituted out entirely.  
 
